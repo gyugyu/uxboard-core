@@ -1,2 +1,2 @@
 # uxboard-core
-📋UX achivement visualization tool
+📋 UX achivement visualization tool
