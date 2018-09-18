@@ -1,5 +1,5 @@
-import firebase from 'firebase'
 import Grid from '@material-ui/core/Grid'
+import firebase from 'firebase'
 import React from 'react'
 import { ContextOption } from '../firebase/FirebaseContext'
 import withFirebase from '../firebase/withFirebase'

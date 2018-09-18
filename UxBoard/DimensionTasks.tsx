@@ -1,5 +1,5 @@
 import Grid from '@material-ui/core/Grid'
-import * as React from 'react'
+import React from 'react'
 import { IDimension, IIndex } from './interfaces'
 import Task from './Task'
 
