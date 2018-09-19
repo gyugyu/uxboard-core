@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import * as firebase from 'firebase'
 import path from 'path'
 
@@ -18,3 +20,8 @@ firebase
   .database()
   .ref(`${config.databasePrefix}/indices`)
   .set(['意義', '素敵・楽しい', '快適', '使いやすい', '安全・安心', '機能する'])
+  .then(() => process.exit(0))
+  .catch(e => {
+    console.error(e)
+    process.exit(1)
+  })
