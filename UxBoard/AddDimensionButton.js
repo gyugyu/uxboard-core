@@ -58,7 +58,7 @@ var AddDimensionButton = /** @class */ (function (_super) {
         var _this = this;
         var isLoggedIn = this.state.isLoggedIn;
         if (!isLoggedIn) {
-            return;
+            return React.createElement(React.Fragment, null);
         }
         var classes = this.props.classes;
         return (React.createElement(Button_1.default, { variant: 'fab', color: 'primary', className: classes.fab, onClick: function () { return _this.dbRef.push({ name: '' }); } },
