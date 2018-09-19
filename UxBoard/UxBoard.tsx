@@ -67,8 +67,10 @@ class App extends React.Component<InternalProps, State> {
   componentWillMount () {
     this.dbRef.on('value', snapshot => {
       if (snapshot != null) {
-        const indices = snapshot.val() as IIndex[]
-        this.setState({ indices })
+        const indices = snapshot.val() as IIndex[] | undefined
+        if (indices != null) {
+          this.setState({ indices })
+        }
       }
     })
   }

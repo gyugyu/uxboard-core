@@ -30,7 +30,10 @@ export default class Dimension extends React.Component<Props, State> {
   componentWillMount (): void {
     this.dbRef.on('value', snapshot => {
       if (snapshot != null) {
-        this.setState({ ...(snapshot.val() as IDimension) })
+        const dimension = snapshot.val() as IDimension | undefined
+        if (dimension != null) {
+          this.setState({ ...dimension })
+        }
       }
     })
   }

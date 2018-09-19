@@ -52,7 +52,10 @@ class Task extends React.Component<InternalProps, State> {
       this.taskRef = firebase.database().ref(`${databasePrefix}/tasks`).child(id)
       this.taskRef.on('value', snapshot => {
         if (snapshot != null) {
-          this.setState({ ...(snapshot.val() as ITask) })
+          const task = snapshot.val() as ITask | undefined
+          if (task != null) {
+            this.setState({ ...task })
+          }
         }
       })
     }

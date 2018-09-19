@@ -35,8 +35,10 @@ class DimensionArea extends React.Component<InternalProps, State> {
   componentWillMount () {
     this.dbRef.on('value', snapshot => {
       if (snapshot != null) {
-        const dimensions = snapshot.val() as Record<string, IDimension>
-        this.setState({ dimensions })
+        const dimensions = snapshot.val() as Record<string, IDimension> | undefined
+        if (dimensions != null) {
+          this.setState({ dimensions })
+        }
       }
     })
   }
