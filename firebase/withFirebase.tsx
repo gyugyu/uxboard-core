@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import FirebaseContext, { ContextOption } from './FirebaseContext'
 
 export default function withFirebase<T> (

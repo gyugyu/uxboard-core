@@ -1,7 +1,7 @@
 import CardContent from '@material-ui/core/CardContent'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
-import React from 'react'
+import * as React from 'react'
 
 interface Props {
   classes: Record<string, string>

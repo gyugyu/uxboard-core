@@ -1,5 +1,5 @@
-import firebase from 'firebase'
-import React from 'react'
+import * as firebase from 'firebase'
+import * as React from 'react'
 
 const authProvider = new firebase.auth.GoogleAuthProvider()
 

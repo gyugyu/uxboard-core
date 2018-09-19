@@ -1,7 +1,7 @@
 import Card from '@material-ui/core/Card'
 import Grid from '@material-ui/core/Grid'
-import firebase from 'firebase'
-import React from 'react'
+import * as firebase from 'firebase'
+import * as React from 'react'
 import EditableLabel from './EditableLabel'
 import { IDimension } from './interfaces'
 
