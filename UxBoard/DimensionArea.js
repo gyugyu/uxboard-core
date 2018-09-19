@@ -32,6 +32,9 @@ var DimensionArea = /** @class */ (function (_super) {
     __extends(DimensionArea, _super);
     function DimensionArea(props) {
         var _this = _super.call(this, props) || this;
+        _this.state = {
+            dimensions: {}
+        };
         var databasePrefix = props.databasePrefix, firebase = props.firebase;
         _this.dbRef = firebase.database().ref(databasePrefix + "/dimensions");
         return _this;
