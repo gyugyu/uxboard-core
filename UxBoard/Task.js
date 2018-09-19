@@ -60,6 +60,7 @@ var Task = /** @class */ (function (_super) {
     function Task() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.state = {
+            anchorEl: null,
             title: '',
             open: false,
             status: interfaces_1.TaskStatus.Yet
@@ -118,14 +119,14 @@ var Task = /** @class */ (function (_super) {
     Task.prototype.render = function () {
         var _this = this;
         var classes = this.props.classes;
-        var _a = this.state, title = _a.title, status = _a.status, open = _a.open;
+        var _a = this.state, anchorEl = _a.anchorEl, title = _a.title, status = _a.status, open = _a.open;
         return (React.createElement(Grid_1.default, { item: true },
             React.createElement(Card_1.default, { style: status === interfaces_1.TaskStatus.Yet ? style.yet : style.done, className: classes.card2 },
                 React.createElement(EditableLabel_1.default, { classes: classes, initialValue: title, onLeaveEditMode: this.handleLeaveEditMode }),
-                React.createElement(CardActions_1.default, null, this.taskRef && (React.createElement(React.Fragment, null,
-                    React.createElement(IconButton_1.default, { onClick: function () { return _this.setState({ open: true }); } },
+                React.createElement(CardActions_1.default, null, this.taskRef && (React.createElement("div", null,
+                    React.createElement(IconButton_1.default, { onClick: function (evt) { return _this.setState({ anchorEl: evt.currentTarget, open: true }); } },
                         React.createElement(MoreVert_1.default, null)),
-                    React.createElement(Menu_1.default, { open: open, onClose: function () { return _this.setState({ open: false }); } },
+                    React.createElement(Menu_1.default, { anchorEl: anchorEl, onClose: function () { return _this.setState({ anchorEl: null, open: false }); }, open: open },
                         status !== interfaces_1.TaskStatus.Yet && (React.createElement(MenuItem_1.default, { onClick: this.createHandleClickMenuItem(interfaces_1.TaskStatus.Yet) }, "Mark as yet")),
                         status !== interfaces_1.TaskStatus.Doing && (React.createElement(MenuItem_1.default, { onClick: this.createHandleClickMenuItem(interfaces_1.TaskStatus.Doing) }, "Mark as doing")),
                         status !== interfaces_1.TaskStatus.Done && (React.createElement(MenuItem_1.default, { onClick: this.createHandleClickMenuItem(interfaces_1.TaskStatus.Done) }, "Mark as done")))))))));
