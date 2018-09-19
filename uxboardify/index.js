@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 "use strict";
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
@@ -17,4 +18,9 @@ firebase.initializeApp(config.firebase);
 firebase
     .database()
     .ref(config.databasePrefix + "/indices")
-    .set(['意義', '素敵・楽しい', '快適', '使いやすい', '安全・安心', '機能する']);
+    .set(['意義', '素敵・楽しい', '快適', '使いやすい', '安全・安心', '機能する'])
+    .then(function () { return process.exit(0); })
+    .catch(function (e) {
+    console.error(e);
+    process.exit(1);
+});
