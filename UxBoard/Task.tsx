@@ -1,5 +1,6 @@
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
+import orange from '@material-ui/core/colors/orange'
 import pink from '@material-ui/core/colors/pink'
 import yellow from '@material-ui/core/colors/yellow'
 import Grid from '@material-ui/core/Grid'
@@ -17,6 +18,9 @@ import EditableLabel from './EditableLabel'
 const style = {
   yet: {
     backgroundColor: yellow.A100
+  },
+  doing: {
+    backgroundColor: orange.A100
   },
   done: {
     backgroundColor: pink.A100
@@ -107,10 +111,18 @@ class Task extends React.Component<InternalProps, State> {
   render () {
     const { classes } = this.props
     const { anchorEl, title, status, open } = this.state
+    let cardStyle: { backgroundColor: string }
+    if (status === TaskStatus.Doing) {
+      cardStyle = style.doing
+    } else if (status === TaskStatus.Done) {
+      cardStyle = style.done
+    } else {
+      cardStyle = style.yet
+    }
     return (
       <Grid item={true}>
         <Card
-          style={status === TaskStatus.Yet ? style.yet : style.done}
+          style={cardStyle}
           className={classes.card2}
         >
           <EditableLabel
