@@ -48,7 +48,7 @@ class AddDimensionButton extends React.Component<InternalProps, State> {
   render () {
     const { isLoggedIn } = this.state
     if (!isLoggedIn) {
-      return
+      return <React.Fragment />
     }
     const { classes } = this.props
     return (
