@@ -91,7 +91,10 @@ var Task = /** @class */ (function (_super) {
             this.taskRef = firebase.database().ref(databasePrefix + "/tasks").child(id);
             this.taskRef.on('value', function (snapshot) {
                 if (snapshot != null) {
-                    _this.setState(__assign({}, snapshot.val()));
+                    var task = snapshot.val();
+                    if (task != null) {
+                        _this.setState(__assign({}, task));
+                    }
                 }
             });
         }

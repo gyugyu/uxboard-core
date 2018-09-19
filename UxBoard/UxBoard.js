@@ -79,7 +79,9 @@ var App = /** @class */ (function (_super) {
         this.dbRef.on('value', function (snapshot) {
             if (snapshot != null) {
                 var indices = snapshot.val();
-                _this.setState({ indices: indices });
+                if (indices != null) {
+                    _this.setState({ indices: indices });
+                }
             }
         });
     };

@@ -57,7 +57,10 @@ var Dimension = /** @class */ (function (_super) {
         var _this = this;
         this.dbRef.on('value', function (snapshot) {
             if (snapshot != null) {
-                _this.setState(__assign({}, snapshot.val()));
+                var dimension = snapshot.val();
+                if (dimension != null) {
+                    _this.setState(__assign({}, dimension));
+                }
             }
         });
     };

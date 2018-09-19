@@ -44,7 +44,9 @@ var DimensionArea = /** @class */ (function (_super) {
         this.dbRef.on('value', function (snapshot) {
             if (snapshot != null) {
                 var dimensions = snapshot.val();
-                _this.setState({ dimensions: dimensions });
+                if (dimensions != null) {
+                    _this.setState({ dimensions: dimensions });
+                }
             }
         });
     };
