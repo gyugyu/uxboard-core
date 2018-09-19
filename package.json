@@ -8,6 +8,9 @@
     "**/*.js",
     "**/*.d.ts"
   ],
+  "bin": {
+    "uxboardify": "uxboardify/index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,6 +24,7 @@
   "devDependencies": {
     "@material-ui/core": "^3.1.0",
     "@material-ui/icons": "^3.0.1",
+    "@types/node": "^10.10.1",
     "firebase": "^5.5.0",
     "react": "^16.5.1",
     "typescript": "^3.0.3"
