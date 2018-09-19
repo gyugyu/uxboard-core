@@ -39,6 +39,7 @@ interface InternalProps extends Props, ContextOption {
 }
 
 interface State extends ITask {
+  anchorEl: EventTarget & HTMLElement | null
   open: boolean
 }
 
@@ -46,6 +47,7 @@ class Task extends React.Component<InternalProps, State> {
   private taskRef?: firebase.database.Reference
 
   state = {
+    anchorEl: null,
     title: '',
     open: false,
     status: TaskStatus.Yet
@@ -104,7 +106,7 @@ class Task extends React.Component<InternalProps, State> {
 
   render () {
     const { classes } = this.props
-    const { title, status, open } = this.state
+    const { anchorEl, title, status, open } = this.state
     return (
       <Grid item={true}>
         <Card
@@ -118,11 +120,15 @@ class Task extends React.Component<InternalProps, State> {
           />
           <CardActions>
             {this.taskRef && (
-              <React.Fragment>
-                <IconButton onClick={() => this.setState({ open: true })}>
+              <div>
+                <IconButton onClick={evt => this.setState({ anchorEl: evt.currentTarget, open: true })}>
                   <MoreVertIcon />
                 </IconButton>
-                <Menu open={open} onClose={() => this.setState({ open: false })}>
+                <Menu 
+                  anchorEl={anchorEl}
+                  onClose={() => this.setState({ anchorEl: null, open: false })}
+                  open={open}
+                >
                   {status !== TaskStatus.Yet && (
                     <MenuItem onClick={this.createHandleClickMenuItem(TaskStatus.Yet)}>
                       Mark as yet
@@ -139,7 +145,7 @@ class Task extends React.Component<InternalProps, State> {
                     </MenuItem>
                   )}
                 </Menu>
-              </React.Fragment>
+              </div>
             )}
           </CardActions>
         </Card>
