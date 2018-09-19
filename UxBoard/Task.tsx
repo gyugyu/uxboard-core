@@ -1,9 +1,12 @@
-import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
 import pink from '@material-ui/core/colors/pink'
 import yellow from '@material-ui/core/colors/yellow'
 import Grid from '@material-ui/core/Grid'
+import IconButton from '@material-ui/core/IconButton'
+import Menu from '@material-ui/core/Menu'
+import MenuItem from '@material-ui/core/MenuItem'
+import MoreVertIcon from '@material-ui/icons/MoreVert'
 import * as firebase from 'firebase'
 import * as React from 'react'
 import { ContextOption } from '../firebase/FirebaseContext'
@@ -36,6 +39,7 @@ interface InternalProps extends Props, ContextOption {
 }
 
 interface State extends ITask {
+  open: boolean
 }
 
 class Task extends React.Component<InternalProps, State> {
@@ -43,6 +47,7 @@ class Task extends React.Component<InternalProps, State> {
 
   state = {
     title: '',
+    open: false,
     status: TaskStatus.Yet
   }
 
@@ -80,7 +85,7 @@ class Task extends React.Component<InternalProps, State> {
         [`${databasePrefix}/dimensions/${dimensionId}/tasks/${newTaskId}`]: true,
         [`${databasePrefix}/tasks/${newTaskId}`]: {
           title,
-          status
+          status: TaskStatus.Yet
         }
       }
       db.ref().update(updates)
@@ -90,9 +95,16 @@ class Task extends React.Component<InternalProps, State> {
     this.setState({ title })
   }
 
+  private createHandleClickMenuItem = (status: TaskStatus) => (): void => {
+    if (this.taskRef != null) {
+      this.taskRef.update({ status })
+    }
+    this.setState({ open: false, status })
+  }
+
   render () {
     const { classes } = this.props
-    const { title, status } = this.state
+    const { title, status, open } = this.state
     return (
       <Grid item={true}>
         <Card
@@ -105,9 +117,30 @@ class Task extends React.Component<InternalProps, State> {
             onLeaveEditMode={this.handleLeaveEditMode}
           />
           <CardActions>
-            <Button onClick={_evt => {}}>
-              Mark as done
-            </Button>
+            {this.taskRef && (
+              <React.Fragment>
+                <IconButton onClick={() => this.setState({ open: true })}>
+                  <MoreVertIcon />
+                </IconButton>
+                <Menu open={open} onClose={() => this.setState({ open: false })}>
+                  {status !== TaskStatus.Yet && (
+                    <MenuItem onClick={this.createHandleClickMenuItem(TaskStatus.Yet)}>
+                      Mark as yet
+                    </MenuItem>
+                  )}
+                  {status !== TaskStatus.Doing && (
+                    <MenuItem onClick={this.createHandleClickMenuItem(TaskStatus.Doing)}>
+                      Mark as doing
+                    </MenuItem>
+                  )}
+                  {status !== TaskStatus.Done && (
+                    <MenuItem onClick={this.createHandleClickMenuItem(TaskStatus.Done)}>
+                      Mark as done
+                    </MenuItem>
+                  )}
+                </Menu>
+              </React.Fragment>
+            )}
           </CardActions>
         </Card>
       </Grid>

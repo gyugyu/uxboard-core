@@ -14,6 +14,7 @@ import { IIndex } from './interfaces'
 const styles: Record<string, CSSProperties> = {
   board: {
     overflowX: 'scroll',
+    overflowY: 'hidden'
   },
   card: {
     alignItems: 'center',
