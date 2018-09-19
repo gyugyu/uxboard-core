@@ -36,8 +36,16 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Card_1 = __importDefault(require("@material-ui/core/Card"));
 var Grid_1 = __importDefault(require("@material-ui/core/Grid"));
+var lightGreen_1 = __importDefault(require("@material-ui/core/colors/lightGreen"));
+var withStyles_1 = __importDefault(require("@material-ui/core/styles/withStyles"));
+var classnames_1 = __importDefault(require("classnames"));
 var React = __importStar(require("react"));
 var EditableLabel_1 = __importDefault(require("./EditableLabel"));
+var style = function (_theme) { return ({
+    card: {
+        backgroundColor: lightGreen_1.default.A100
+    }
+}); };
 var Dimension = /** @class */ (function (_super) {
     __extends(Dimension, _super);
     function Dimension(props) {
@@ -65,12 +73,12 @@ var Dimension = /** @class */ (function (_super) {
         });
     };
     Dimension.prototype.render = function () {
-        var classes = this.props.classes;
+        var _a = this.props, classes = _a.classes, definedClasses = _a.definedClasses;
         var name = this.state.name;
         return (React.createElement(Grid_1.default, { item: true },
-            React.createElement(Card_1.default, { className: classes.card },
-                React.createElement(EditableLabel_1.default, { classes: classes, initialValue: name, onLeaveEditMode: this.handleLeaveEditMode }))));
+            React.createElement(Card_1.default, { className: classnames_1.default(definedClasses.card, classes.card) },
+                React.createElement(EditableLabel_1.default, { definedClasses: definedClasses, initialValue: name, onLeaveEditMode: this.handleLeaveEditMode }))));
     };
     return Dimension;
 }(React.Component));
-exports.default = Dimension;
+exports.default = withStyles_1.default(style)(Dimension);

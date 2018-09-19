@@ -52,16 +52,16 @@ var DimensionArea = /** @class */ (function (_super) {
     };
     DimensionArea.prototype.render = function () {
         var _this = this;
-        var _a = this.props, classes = _a.classes, indices = _a.indices;
+        var _a = this.props, definedClasses = _a.definedClasses, indices = _a.indices;
         var dimensions = this.state.dimensions;
         return (React.createElement(Grid_1.default, { item: true },
             React.createElement(Grid_1.default, { container: true, direction: 'column', spacing: 16 },
                 React.createElement(Grid_1.default, { item: true },
-                    React.createElement(Grid_1.default, { className: classes.container, container: true, spacing: 16 }, Object.keys(dimensions).map(function (key) {
-                        return (React.createElement(DimensionTasks_1.default, { classes: classes, dimension: dimensions[key], id: key, indices: indices, key: key }));
+                    React.createElement(Grid_1.default, { className: definedClasses.container, container: true, spacing: 16 }, Object.keys(dimensions).map(function (key) {
+                        return (React.createElement(DimensionTasks_1.default, { definedClasses: definedClasses, dimension: dimensions[key], id: key, indices: indices, key: key }));
                     }))),
                 React.createElement(Grid_1.default, { item: true },
-                    React.createElement(Grid_1.default, { className: classes.container, container: true, spacing: 16 }, Object.keys(dimensions).map(function (key) { return (React.createElement(Dimension_1.default, { classes: classes, key: key, id: key, dbRef: _this.dbRef })); }))))));
+                    React.createElement(Grid_1.default, { className: definedClasses.container, container: true, spacing: 16 }, Object.keys(dimensions).map(function (key) { return (React.createElement(Dimension_1.default, { definedClasses: definedClasses, key: key, id: key, dbRef: _this.dbRef })); }))))));
     };
     return DimensionArea;
 }(React.Component));

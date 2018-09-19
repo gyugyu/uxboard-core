@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IDimension, IIndex } from './interfaces';
 interface Props {
-    classes: Record<string, string>;
+    definedClasses: Record<string, string>;
     dimension: IDimension;
     id: string;
     indices: IIndex[];

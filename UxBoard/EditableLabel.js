@@ -55,9 +55,9 @@ var EditableLabel = /** @class */ (function (_super) {
     };
     EditableLabel.prototype.render = function () {
         var _this = this;
-        var classes = this.props.classes;
+        var definedClasses = this.props.definedClasses;
         var _a = this.state, isEditing = _a.isEditing, value = _a.value;
-        return (React.createElement(CardContent_1.default, { className: classes.card3 }, isEditing ? (React.createElement(TextField_1.default, { value: value, onKeyUp: this.handleKeyUp, onChange: function (evt) { return _this.setState({ value: evt.target.value }); } })) : (React.createElement(Typography_1.default, { variant: 'title', onDoubleClick: this.handleDoubleClick }, value))));
+        return (React.createElement(CardContent_1.default, { className: definedClasses.card3 }, isEditing ? (React.createElement(TextField_1.default, { value: value, onKeyUp: this.handleKeyUp, onChange: function (evt) { return _this.setState({ value: evt.target.value }); } })) : (React.createElement(Typography_1.default, { variant: 'title', onDoubleClick: this.handleDoubleClick }, value))));
     };
     return EditableLabel;
 }(React.Component));

@@ -40,13 +40,13 @@ var styles = {
     card: {
         alignItems: 'center',
         display: 'flex',
-        width: 300,
-        height: 200,
+        width: 240,
+        height: 120,
         justifyContent: 'center'
     },
     card2: {
-        width: 300,
-        height: 200,
+        width: 240,
+        height: 120,
     },
     card3: {
         alignItems: 'center',
@@ -97,7 +97,7 @@ var App = /** @class */ (function (_super) {
                             React.createElement(Card_1.default, { className: classes.card + " " + classes.noShadow },
                                 React.createElement(CardContent_1.default, null,
                                     React.createElement(Typography_1.default, { variant: 'title', component: 'p' }, index.name))))); }))),
-                    React.createElement(DimensionArea_1.default, { classes: classes, indices: indices }))),
+                    React.createElement(DimensionArea_1.default, { definedClasses: classes, indices: indices }))),
             React.createElement(AddDimensionButton_1.default, null)));
     };
     return App;

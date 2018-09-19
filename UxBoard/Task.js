@@ -43,12 +43,14 @@ var Grid_1 = __importDefault(require("@material-ui/core/Grid"));
 var IconButton_1 = __importDefault(require("@material-ui/core/IconButton"));
 var Menu_1 = __importDefault(require("@material-ui/core/Menu"));
 var MenuItem_1 = __importDefault(require("@material-ui/core/MenuItem"));
+var withStyles_1 = __importDefault(require("@material-ui/core/styles/withStyles"));
 var MoreVert_1 = __importDefault(require("@material-ui/icons/MoreVert"));
+var classnames_1 = __importDefault(require("classnames"));
 var React = __importStar(require("react"));
 var withFirebase_1 = __importDefault(require("../firebase/withFirebase"));
 var interfaces_1 = require("./interfaces");
 var EditableLabel_1 = __importDefault(require("./EditableLabel"));
-var style = {
+var style = function (_theme) { return ({
     yet: {
         backgroundColor: yellow_1.default.A100
     },
@@ -58,7 +60,7 @@ var style = {
     done: {
         backgroundColor: pink_1.default.A100
     }
-};
+}); };
 var Task = /** @class */ (function (_super) {
     __extends(Task, _super);
     function Task() {
@@ -122,21 +124,17 @@ var Task = /** @class */ (function (_super) {
     };
     Task.prototype.render = function () {
         var _this = this;
-        var classes = this.props.classes;
-        var _a = this.state, anchorEl = _a.anchorEl, title = _a.title, status = _a.status, open = _a.open;
-        var cardStyle;
-        if (status === interfaces_1.TaskStatus.Doing) {
-            cardStyle = style.doing;
-        }
-        else if (status === interfaces_1.TaskStatus.Done) {
-            cardStyle = style.done;
-        }
-        else {
-            cardStyle = style.yet;
-        }
+        var _a;
+        var _b = this.props, classes = _b.classes, definedClasses = _b.definedClasses;
+        var _c = this.state, anchorEl = _c.anchorEl, title = _c.title, status = _c.status, open = _c.open;
         return (React.createElement(Grid_1.default, { item: true },
-            React.createElement(Card_1.default, { style: cardStyle, className: classes.card2 },
-                React.createElement(EditableLabel_1.default, { classes: classes, initialValue: title, onLeaveEditMode: this.handleLeaveEditMode }),
+            React.createElement(Card_1.default, { className: classnames_1.default((_a = {},
+                    _a[classes.yet] = status === interfaces_1.TaskStatus.Yet,
+                    _a[classes.doing] = status === interfaces_1.TaskStatus.Doing,
+                    _a[classes.done] = status === interfaces_1.TaskStatus.Done,
+                    _a[definedClasses.card2] = true,
+                    _a)) },
+                React.createElement(EditableLabel_1.default, { definedClasses: definedClasses, initialValue: title, onLeaveEditMode: this.handleLeaveEditMode }),
                 React.createElement(CardActions_1.default, null, this.taskRef && (React.createElement("div", null,
                     React.createElement(IconButton_1.default, { onClick: function (evt) { return _this.setState({ anchorEl: evt.currentTarget, open: true }); } },
                         React.createElement(MoreVert_1.default, null)),
@@ -147,4 +145,4 @@ var Task = /** @class */ (function (_super) {
     };
     return Task;
 }(React.Component));
-exports.default = withFirebase_1.default(Task);
+exports.default = withFirebase_1.default(withStyles_1.default(style)(Task));

@@ -1,6 +1,6 @@
 import * as React from 'react';
 interface Props {
-    classes: Record<string, string>;
+    definedClasses: Record<string, string>;
     dimensionId: string;
     id?: string;
     indexId: string;

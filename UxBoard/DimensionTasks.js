@@ -32,7 +32,7 @@ var DimensionTasks = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     DimensionTasks.prototype.render = function () {
-        var _a = this.props, classes = _a.classes, dimension = _a.dimension, indices = _a.indices, id = _a.id;
+        var _a = this.props, definedClasses = _a.definedClasses, dimension = _a.dimension, indices = _a.indices, id = _a.id;
         var tasks = dimension.tasks || {};
         var taskIds = Object.keys(tasks).filter(function (k) { return tasks[k]; });
         return (React.createElement(Grid_1.default, { item: true, xs: true },
@@ -42,7 +42,7 @@ var DimensionTasks = /** @class */ (function (_super) {
                 if (iTasks != null) {
                     taskId = taskIds.find(function (id) { return iTasks[id]; });
                 }
-                return (React.createElement(Task_1.default, { classes: classes, dimensionId: id, key: index.name, id: taskId, indexId: "" + i }));
+                return (React.createElement(Task_1.default, { definedClasses: definedClasses, dimensionId: id, key: index.name, id: taskId, indexId: "" + i }));
             }))));
     };
     return DimensionTasks;
