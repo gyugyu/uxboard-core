@@ -19,13 +19,13 @@ const styles: Record<string, CSSProperties> = {
   card: {
     alignItems: 'center',
     display: 'flex',
-    width: 300,
-    height: 200,
+    width: 240,
+    height: 120,
     justifyContent: 'center'
   },
   card2: {
-    width: 300,
-    height: 200,
+    width: 240,
+    height: 120,
   },
   card3: {
     alignItems: 'center',
@@ -106,7 +106,7 @@ class App extends React.Component<InternalProps, State> {
                 ))}
               </Grid>
             </Grid>
-            <DimensionArea classes={classes} indices={indices} />
+            <DimensionArea definedClasses={classes} indices={indices} />
           </Grid>
         </div>
         <AddDimensionButton />

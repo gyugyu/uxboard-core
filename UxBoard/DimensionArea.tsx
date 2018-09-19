@@ -8,7 +8,7 @@ import DimensionTasks from './DimensionTasks'
 import { IDimension, IIndex } from './interfaces'
 
 interface Props {
-  classes: Record<string, string>
+  definedClasses: Record<string, string>
   indices: IIndex[]
 }
 
@@ -44,7 +44,7 @@ class DimensionArea extends React.Component<InternalProps, State> {
   }
 
   render () {
-    const { classes, indices } = this.props
+    const { definedClasses, indices } = this.props
     const { dimensions } = this.state
     return (
       <Grid item={true}>
@@ -55,14 +55,14 @@ class DimensionArea extends React.Component<InternalProps, State> {
         >
           <Grid item={true}>
             <Grid
-              className={classes.container}
+              className={definedClasses.container}
               container={true}
               spacing={16}
             >
               {Object.keys(dimensions).map(key => {
                 return (
                   <DimensionTasks
-                    classes={classes}
+                    definedClasses={definedClasses}
                     dimension={dimensions[key]}
                     id={key}
                     indices={indices}
@@ -74,13 +74,13 @@ class DimensionArea extends React.Component<InternalProps, State> {
           </Grid>
           <Grid item={true}>
             <Grid
-              className={classes.container}
+              className={definedClasses.container}
               container={true}
               spacing={16}
             >
               {Object.keys(dimensions).map(key => (
                 <Dimension
-                  classes={classes}
+                  definedClasses={definedClasses}
                   key={key}
                   id={key}
                   dbRef={this.dbRef}

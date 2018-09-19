@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography'
 import * as React from 'react'
 
 interface Props {
-  classes: Record<string, string>
+  definedClasses: Record<string, string>
   initialValue: string
   onLeaveEditMode: (value: string) => void
 }
@@ -44,10 +44,10 @@ export default class EditableLabel extends React.Component<Props, State> {
   }
 
   render () {
-    const { classes } = this.props
+    const { definedClasses } = this.props
     const { isEditing, value } = this.state
     return (
-      <CardContent className={classes.card3}>
+      <CardContent className={definedClasses.card3}>
         {isEditing ? (
           <TextField
             value={value}

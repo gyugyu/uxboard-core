@@ -7,7 +7,10 @@ import Grid from '@material-ui/core/Grid'
 import IconButton from '@material-ui/core/IconButton'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
+import { Theme } from '@material-ui/core/styles/createMuiTheme'
+import withStyles, { CSSProperties } from '@material-ui/core/styles/withStyles'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
+import classnames from 'classnames'
 import * as firebase from 'firebase'
 import * as React from 'react'
 import { ContextOption } from '../firebase/FirebaseContext'
@@ -15,7 +18,7 @@ import withFirebase from '../firebase/withFirebase'
 import { TaskStatus } from './interfaces'
 import EditableLabel from './EditableLabel'
 
-const style = {
+const style = (_theme: Theme): Record<'yet' | 'doing' | 'done', CSSProperties> => ({
   yet: {
     backgroundColor: yellow.A100
   },
@@ -25,7 +28,7 @@ const style = {
   done: {
     backgroundColor: pink.A100
   }
-}
+})
 
 interface ITask {
   title: string
@@ -33,13 +36,14 @@ interface ITask {
 }
 
 interface Props {
-  classes: Record<string, string>
+  definedClasses: Record<string, string>
   dimensionId: string
   id?: string
   indexId: string
 }
 
 interface InternalProps extends Props, ContextOption {
+  classes: Record<'yet' | 'doing' | 'done', string>
 }
 
 interface State extends ITask {
@@ -109,24 +113,18 @@ class Task extends React.Component<InternalProps, State> {
   }
 
   render () {
-    const { classes } = this.props
+    const { classes, definedClasses } = this.props
     const { anchorEl, title, status, open } = this.state
-    let cardStyle: { backgroundColor: string }
-    if (status === TaskStatus.Doing) {
-      cardStyle = style.doing
-    } else if (status === TaskStatus.Done) {
-      cardStyle = style.done
-    } else {
-      cardStyle = style.yet
-    }
     return (
       <Grid item={true}>
-        <Card
-          style={cardStyle}
-          className={classes.card2}
-        >
+        <Card className={classnames({
+          [classes.yet]: status === TaskStatus.Yet,
+          [classes.doing]: status === TaskStatus.Doing,
+          [classes.done]: status === TaskStatus.Done,
+          [definedClasses.card2]: true
+        })}>
           <EditableLabel
-            classes={classes}
+            definedClasses={definedClasses}
             initialValue={title}
             onLeaveEditMode={this.handleLeaveEditMode}
           />
@@ -166,4 +164,4 @@ class Task extends React.Component<InternalProps, State> {
   }
 }
 
-export default withFirebase<Props>(Task)
+export default withFirebase<Props>(withStyles(style)(Task))

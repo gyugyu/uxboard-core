@@ -1,12 +1,23 @@
 import Card from '@material-ui/core/Card'
 import Grid from '@material-ui/core/Grid'
+import lightGreen from '@material-ui/core/colors/lightGreen'
+import { Theme } from '@material-ui/core/styles/createMuiTheme'
+import withStyles, { CSSProperties } from '@material-ui/core/styles/withStyles'
+import classnames from 'classnames'
 import * as firebase from 'firebase'
 import * as React from 'react'
 import EditableLabel from './EditableLabel'
 import { IDimension } from './interfaces'
 
+const style = (_theme: Theme): Record<'card', CSSProperties> => ({
+  card: {
+    backgroundColor: lightGreen.A100
+  }
+})
+
 interface Props {
-  classes: Record<string, string>
+  classes: Record<'card', string>
+  definedClasses: Record<string, string>
   id: string
   dbRef: firebase.database.Reference
 }
@@ -14,7 +25,7 @@ interface Props {
 interface State extends IDimension {
 }
 
-export default class Dimension extends React.Component<Props, State> {
+class Dimension extends React.Component<Props, State> {
   private dbRef: firebase.database.Reference
 
   state = {
@@ -44,13 +55,13 @@ export default class Dimension extends React.Component<Props, State> {
   }
 
   render () {
-    const { classes } = this.props
+    const { classes, definedClasses } = this.props
     const { name } = this.state
     return (
       <Grid item={true}>
-        <Card className={classes.card}>
+        <Card className={classnames(definedClasses.card, classes.card)}>
           <EditableLabel
-            classes={classes}
+            definedClasses={definedClasses}
             initialValue={name}
             onLeaveEditMode={this.handleLeaveEditMode}
           />
@@ -59,3 +70,5 @@ export default class Dimension extends React.Component<Props, State> {
     )
   }
 }
+
+export default withStyles(style)(Dimension)
