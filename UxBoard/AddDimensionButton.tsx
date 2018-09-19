@@ -20,16 +20,36 @@ interface InternalProps extends ContextOption {
   classes: Record<'fab', string>
 }
 
-class AddDimensionButton extends React.Component<InternalProps> {
+interface State {
+  isLoggedIn: boolean
+}
+
+class AddDimensionButton extends React.Component<InternalProps, State> {
+  private auth: firebase.auth.Auth
   private dbRef: firebase.database.Reference
+
+  state = {
+    isLoggedIn: false
+  }
 
   constructor (props: InternalProps) {
     super(props)
     const { databasePrefix, firebase } = props
+    this.auth = firebase.auth()
     this.dbRef = firebase.database().ref(`${databasePrefix}/dimensions`)
   }
 
+  componentWillMount () {
+    this.auth.onAuthStateChanged(user => {
+      this.setState({ isLoggedIn: user != null })
+    })
+  }
+
   render () {
+    const { isLoggedIn } = this.state
+    if (!isLoggedIn) {
+      return
+    }
     const { classes } = this.props
     return (
       <Button
