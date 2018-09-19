@@ -34,12 +34,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Button_1 = __importDefault(require("@material-ui/core/Button"));
 var Card_1 = __importDefault(require("@material-ui/core/Card"));
 var CardActions_1 = __importDefault(require("@material-ui/core/CardActions"));
 var pink_1 = __importDefault(require("@material-ui/core/colors/pink"));
 var yellow_1 = __importDefault(require("@material-ui/core/colors/yellow"));
 var Grid_1 = __importDefault(require("@material-ui/core/Grid"));
+var IconButton_1 = __importDefault(require("@material-ui/core/IconButton"));
+var Menu_1 = __importDefault(require("@material-ui/core/Menu"));
+var MenuItem_1 = __importDefault(require("@material-ui/core/MenuItem"));
+var MoreVert_1 = __importDefault(require("@material-ui/icons/MoreVert"));
 var React = __importStar(require("react"));
 var withFirebase_1 = __importDefault(require("../firebase/withFirebase"));
 var interfaces_1 = require("./interfaces");
@@ -58,6 +61,7 @@ var Task = /** @class */ (function (_super) {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.state = {
             title: '',
+            open: false,
             status: interfaces_1.TaskStatus.Yet
         };
         _this.handleLeaveEditMode = function (title) {
@@ -72,7 +76,7 @@ var Task = /** @class */ (function (_super) {
                     _a[databasePrefix + "/dimensions/" + dimensionId + "/tasks/" + newTaskId] = true,
                     _a[databasePrefix + "/tasks/" + newTaskId] = {
                         title: title,
-                        status: status
+                        status: interfaces_1.TaskStatus.Yet
                     },
                     _a);
                 db.ref().update(updates);
@@ -82,6 +86,12 @@ var Task = /** @class */ (function (_super) {
             }
             _this.setState({ title: title });
         };
+        _this.createHandleClickMenuItem = function (status) { return function () {
+            if (_this.taskRef != null) {
+                _this.taskRef.update({ status: status });
+            }
+            _this.setState({ open: false, status: status });
+        }; };
         return _this;
     }
     Task.prototype.setTaskRef = function () {
@@ -106,13 +116,19 @@ var Task = /** @class */ (function (_super) {
         this.setTaskRef();
     };
     Task.prototype.render = function () {
+        var _this = this;
         var classes = this.props.classes;
-        var _a = this.state, title = _a.title, status = _a.status;
+        var _a = this.state, title = _a.title, status = _a.status, open = _a.open;
         return (React.createElement(Grid_1.default, { item: true },
             React.createElement(Card_1.default, { style: status === interfaces_1.TaskStatus.Yet ? style.yet : style.done, className: classes.card2 },
                 React.createElement(EditableLabel_1.default, { classes: classes, initialValue: title, onLeaveEditMode: this.handleLeaveEditMode }),
-                React.createElement(CardActions_1.default, null,
-                    React.createElement(Button_1.default, { onClick: function (_evt) { } }, "Mark as done")))));
+                React.createElement(CardActions_1.default, null, this.taskRef && (React.createElement(React.Fragment, null,
+                    React.createElement(IconButton_1.default, { onClick: function () { return _this.setState({ open: true }); } },
+                        React.createElement(MoreVert_1.default, null)),
+                    React.createElement(Menu_1.default, { open: open, onClose: function () { return _this.setState({ open: false }); } },
+                        status !== interfaces_1.TaskStatus.Yet && (React.createElement(MenuItem_1.default, { onClick: this.createHandleClickMenuItem(interfaces_1.TaskStatus.Yet) }, "Mark as yet")),
+                        status !== interfaces_1.TaskStatus.Doing && (React.createElement(MenuItem_1.default, { onClick: this.createHandleClickMenuItem(interfaces_1.TaskStatus.Doing) }, "Mark as doing")),
+                        status !== interfaces_1.TaskStatus.Done && (React.createElement(MenuItem_1.default, { onClick: this.createHandleClickMenuItem(interfaces_1.TaskStatus.Done) }, "Mark as done")))))))));
     };
     return Task;
 }(React.Component));

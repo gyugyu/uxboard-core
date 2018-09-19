@@ -35,6 +35,7 @@ var DimensionArea_1 = __importDefault(require("./DimensionArea"));
 var styles = {
     board: {
         overflowX: 'scroll',
+        overflowY: 'hidden'
     },
     card: {
         alignItems: 'center',
