@@ -4,6 +4,10 @@
   "version": "1.0.0",
   "description": "📋 UX achivement visualization tool",
   "main": "index.js",
+  "files": [
+    "**/*.js",
+    "**/*.d.ts"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
