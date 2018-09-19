@@ -40,12 +40,26 @@ var AddDimensionButton = /** @class */ (function (_super) {
     __extends(AddDimensionButton, _super);
     function AddDimensionButton(props) {
         var _this = _super.call(this, props) || this;
+        _this.state = {
+            isLoggedIn: false
+        };
         var databasePrefix = props.databasePrefix, firebase = props.firebase;
+        _this.auth = firebase.auth();
         _this.dbRef = firebase.database().ref(databasePrefix + "/dimensions");
         return _this;
     }
+    AddDimensionButton.prototype.componentWillMount = function () {
+        var _this = this;
+        this.auth.onAuthStateChanged(function (user) {
+            _this.setState({ isLoggedIn: user != null });
+        });
+    };
     AddDimensionButton.prototype.render = function () {
         var _this = this;
+        var isLoggedIn = this.state.isLoggedIn;
+        if (!isLoggedIn) {
+            return;
+        }
         var classes = this.props.classes;
         return (React.createElement(Button_1.default, { variant: 'fab', color: 'primary', className: classes.fab, onClick: function () { return _this.dbRef.push({ name: '' }); } },
             React.createElement(Add_1.default, null)));

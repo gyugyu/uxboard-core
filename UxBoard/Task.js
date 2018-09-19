@@ -36,6 +36,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Card_1 = __importDefault(require("@material-ui/core/Card"));
 var CardActions_1 = __importDefault(require("@material-ui/core/CardActions"));
+var orange_1 = __importDefault(require("@material-ui/core/colors/orange"));
 var pink_1 = __importDefault(require("@material-ui/core/colors/pink"));
 var yellow_1 = __importDefault(require("@material-ui/core/colors/yellow"));
 var Grid_1 = __importDefault(require("@material-ui/core/Grid"));
@@ -50,6 +51,9 @@ var EditableLabel_1 = __importDefault(require("./EditableLabel"));
 var style = {
     yet: {
         backgroundColor: yellow_1.default.A100
+    },
+    doing: {
+        backgroundColor: orange_1.default.A100
     },
     done: {
         backgroundColor: pink_1.default.A100
@@ -120,8 +124,18 @@ var Task = /** @class */ (function (_super) {
         var _this = this;
         var classes = this.props.classes;
         var _a = this.state, anchorEl = _a.anchorEl, title = _a.title, status = _a.status, open = _a.open;
+        var cardStyle;
+        if (status === interfaces_1.TaskStatus.Doing) {
+            cardStyle = style.doing;
+        }
+        else if (status === interfaces_1.TaskStatus.Done) {
+            cardStyle = style.done;
+        }
+        else {
+            cardStyle = style.yet;
+        }
         return (React.createElement(Grid_1.default, { item: true },
-            React.createElement(Card_1.default, { style: status === interfaces_1.TaskStatus.Yet ? style.yet : style.done, className: classes.card2 },
+            React.createElement(Card_1.default, { style: cardStyle, className: classes.card2 },
                 React.createElement(EditableLabel_1.default, { classes: classes, initialValue: title, onLeaveEditMode: this.handleLeaveEditMode }),
                 React.createElement(CardActions_1.default, null, this.taskRef && (React.createElement("div", null,
                     React.createElement(IconButton_1.default, { onClick: function (evt) { return _this.setState({ anchorEl: evt.currentTarget, open: true }); } },
