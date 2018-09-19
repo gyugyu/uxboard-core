@@ -20,7 +20,11 @@ interface State {
 }
 
 class DimensionArea extends React.Component<InternalProps, State> {
-  dbRef: firebase.database.Reference
+  private dbRef: firebase.database.Reference
+
+  state = {
+    dimensions: {} as Record<string, IDimension>
+  }
 
   constructor (props: InternalProps) {
     super(props)
