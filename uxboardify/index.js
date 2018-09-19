@@ -15,10 +15,18 @@ var firebase = __importStar(require("firebase"));
 var path_1 = __importDefault(require("path"));
 var config = require(path_1.default.join(process.cwd(), 'uxboard.json'));
 firebase.initializeApp(config.firebase);
+var values = [
+    { name: '意義' },
+    { name: '素敵・楽しい' },
+    { name: '快適' },
+    { name: '使いやすい' },
+    { name: '安全・安心' },
+    { name: '機能する' }
+];
 firebase
     .database()
     .ref(config.databasePrefix + "/indices")
-    .set(['意義', '素敵・楽しい', '快適', '使いやすい', '安全・安心', '機能する'])
+    .set(values)
     .then(function () { return process.exit(0); })
     .catch(function (e) {
     console.error(e);
