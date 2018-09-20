@@ -16,6 +16,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert'
 import classnames from 'classnames'
 import * as firebase from 'firebase'
 import * as React from 'react'
+import Auth from '../Auth'
 import { ContextOption } from '../firebase/FirebaseContext'
 import withFirebase from '../firebase/withFirebase'
 import { TaskStatus } from './interfaces'
@@ -131,42 +132,49 @@ class Task extends React.Component<InternalProps, State> {
             initialValue={title}
             onLeaveEditMode={this.handleLeaveEditMode}
           />
-          <CardActions>
-            {this.taskRef && (
-              <div>
-                <IconButton onClick={evt => this.setState({ anchorEl: evt.currentTarget, open: true })}>
-                  <MoreVertIcon />
-                </IconButton>
-                <Menu 
-                  anchorEl={anchorEl}
-                  onClose={() => this.setState({ anchorEl: null, open: false })}
-                  open={open}
-                >
-                  <MenuItem
-                    disabled={status === TaskStatus.Yet}
-                    onClick={this.createHandleClickMenuItem(TaskStatus.Yet)}
-                  >
-                      Mark as yet
-                  </MenuItem>
-                  <MenuItem
-                    disabled={status === TaskStatus.Doing}
-                    onClick={this.createHandleClickMenuItem(TaskStatus.Doing)}
-                  >
-                    Mark as doing
-                  </MenuItem>
-                  <MenuItem
-                    disabled={status === TaskStatus.Done}
-                    onClick={this.createHandleClickMenuItem(TaskStatus.Done)}
-                  >
-                    <ListItemIcon>
-                      <DoneIcon />
-                    </ListItemIcon>
-                    <ListItemText inset={true} primary='Mark as done' />
-                  </MenuItem>
-                </Menu>
-              </div>
+          <Auth>
+            {auth => auth && (
+              <CardActions>
+                {this.taskRef && (
+                  <div>
+                    <IconButton onClick={evt => this.setState({
+                      anchorEl: evt.currentTarget,
+                      open: true
+                    })}>
+                      <MoreVertIcon />
+                    </IconButton>
+                    <Menu 
+                      anchorEl={anchorEl}
+                      onClose={() => this.setState({ anchorEl: null, open: false })}
+                      open={open}
+                    >
+                      <MenuItem
+                        disabled={status === TaskStatus.Yet}
+                        onClick={this.createHandleClickMenuItem(TaskStatus.Yet)}
+                      >
+                        Mark as yet
+                      </MenuItem>
+                      <MenuItem
+                        disabled={status === TaskStatus.Doing}
+                        onClick={this.createHandleClickMenuItem(TaskStatus.Doing)}
+                      >
+                        Mark as doing
+                      </MenuItem>
+                      <MenuItem
+                        disabled={status === TaskStatus.Done}
+                        onClick={this.createHandleClickMenuItem(TaskStatus.Done)}
+                      >
+                        <ListItemIcon>
+                          <DoneIcon />
+                        </ListItemIcon>
+                        <ListItemText inset={true} primary='Mark as done' />
+                      </MenuItem>
+                    </Menu>
+                  </div>
+                )}
+              </CardActions>
             )}
-          </CardActions>
+          </Auth>
         </Card>
       </Grid>
     )

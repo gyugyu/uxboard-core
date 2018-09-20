@@ -14,6 +14,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert'
 import classnames from 'classnames'
 import * as firebase from 'firebase'
 import * as React from 'react'
+import Auth from '../Auth'
 import { ContextOption } from '../firebase/FirebaseContext'
 import withFirebase from '../firebase/withFirebase'
 import EditableLabel from './EditableLabel'
@@ -101,25 +102,32 @@ class Dimension extends React.Component<InternalProps, State> {
             initialValue={name}
             onLeaveEditMode={this.handleLeaveEditMode}
           />
-          <CardActions>
-            <div>
-              <IconButton onClick={evt => this.setState({ anchorEl: evt.currentTarget, open: true })}>
-                <MoreVertIcon />
-              </IconButton>
-              <Menu 
-                anchorEl={anchorEl}
-                onClose={() => this.setState({ anchorEl: null, open: false })}
-                open={open}
-              >
-                <MenuItem onClick={this.handleClickDelete}>
-                  <ListItemIcon>
-                    <DeleteIcon />
-                  </ListItemIcon>
-                  <ListItemText inset={true} primary='Delete' />
-                </MenuItem>
-              </Menu>
-            </div>
-          </CardActions>
+          <Auth>
+            {user => user && (
+              <CardActions>
+                <div>
+                  <IconButton onClick={evt => this.setState({
+                    anchorEl: evt.currentTarget,
+                    open: true
+                  })}>
+                    <MoreVertIcon />
+                  </IconButton>
+                  <Menu 
+                    anchorEl={anchorEl}
+                    onClose={() => this.setState({ anchorEl: null, open: false })}
+                    open={open}
+                  >
+                    <MenuItem onClick={this.handleClickDelete}>
+                      <ListItemIcon>
+                        <DeleteIcon />
+                      </ListItemIcon>
+                      <ListItemText inset={true} primary='Delete' />
+                    </MenuItem>
+                  </Menu>
+                </div>
+              </CardActions>
+            )}
+          </Auth>
         </Card>
       </Grid>
     )

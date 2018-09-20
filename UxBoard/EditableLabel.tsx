@@ -3,8 +3,8 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme'
 import withStyles, { CSSProperties } from '@material-ui/core/styles/withStyles'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
-import * as firebase from 'firebase'
 import * as React from 'react'
+import Auth from '../Auth'
 import { ContextOption } from '../firebase/FirebaseContext'
 import withFirebase from '../firebase/withFirebase'
 
@@ -26,28 +26,17 @@ interface InternalProps extends ContextOption, Props {
 
 interface State {
   isEditing: boolean
-  isLoggedIn: boolean
   value: string
 }
 
 class EditableLabel extends React.Component<InternalProps, State> {
-  private auth: firebase.auth.Auth
-
   constructor (props: InternalProps) {
     super(props)
     const { initialValue } = props
     this.state = {
       isEditing: initialValue === '',
-      isLoggedIn: false,
       value: initialValue
     }
-    this.auth = firebase.auth()
-  }
-
-  componentWillMount () {
-    this.auth.onAuthStateChanged(user => {
-      this.setState({ isLoggedIn: user != null })
-    })
   }
 
   componentWillReceiveProps (newProps: Props) {
@@ -71,21 +60,23 @@ class EditableLabel extends React.Component<InternalProps, State> {
 
   render () {
     const { classes, definedClasses } = this.props
-    const { isEditing, isLoggedIn, value } = this.state
+    const { isEditing, value } = this.state
     return (
       <CardContent className={definedClasses.card3}>
-        {isEditing && isLoggedIn ? (
-          <TextField
-            className={classes.textField}
-            onChange={evt => this.setState({ value: evt.target.value })}
-            onKeyUp={this.handleKeyUp}
-            value={value}
-          />
-        ) : (
-          <Typography variant='subheading' onDoubleClick={this.handleDoubleClick}>
-            {value}
-          </Typography>
-        )}
+        <Auth>
+          {user => user && isEditing ? (
+            <TextField
+              className={classes.textField}
+              onChange={evt => this.setState({ value: evt.target.value })}
+              onKeyUp={this.handleKeyUp}
+              value={value}
+            />
+          ) : (
+            <Typography variant='subheading' onDoubleClick={this.handleDoubleClick}>
+              {value}
+            </Typography>
+          )}
+        </Auth>
       </CardContent>
     )
   }
