@@ -20,6 +20,7 @@ dist: artifacts
 	git checkout -b $(ARTIFACTS_BRANCH)
 	git add . -f
 	git reset -- node_modules
+	git reset -- package-lock.json
 	git commit -m "[ci skip] add artifacts for $(REVISION)" --allow-empty
 	git push -f origin $(ARTIFACTS_BRANCH)
 	git tag -f "v$(VERSION)-$(REVISION)"
