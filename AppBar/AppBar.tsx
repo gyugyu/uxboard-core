@@ -4,18 +4,18 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme'
 import withStyles, { CSSProperties } from '@material-ui/core/styles/withStyles'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
-import firebase from 'firebase'
+import * as firebase from 'firebase'
 import * as React from 'react'
 import { ContextOption } from '../firebase/FirebaseContext'
 import withFirebase from '../firebase/withFirebase'
 
 const styles = (theme: Theme): Record<string, CSSProperties> => ({
+  grow: {
+    flexGrow: 1
+  },
   root: {
     flexGrow: 1,
     marginBottom: theme.spacing.unit * 2
-  },
-  grow: {
-    flexGrow: 1
   }
 })
 
