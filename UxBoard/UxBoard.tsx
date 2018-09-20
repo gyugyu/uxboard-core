@@ -35,8 +35,7 @@ const styles: Record<string, CSSProperties> = {
     boxShadow: 'none'
   },
   root: {
-    flexGrow: 1,
-    width: '120%'
+    flexGrow: 1
   }
 }
 
