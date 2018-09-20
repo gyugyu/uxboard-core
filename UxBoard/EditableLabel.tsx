@@ -3,7 +3,10 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme'
 import withStyles, { CSSProperties } from '@material-ui/core/styles/withStyles'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
+import * as firebase from 'firebase'
 import * as React from 'react'
+import { ContextOption } from '../firebase/FirebaseContext'
+import withFirebase from '../firebase/withFirebase'
 
 const style = (_theme: Theme): Record<'textField', CSSProperties> => ({
   textField: {
@@ -12,33 +15,47 @@ const style = (_theme: Theme): Record<'textField', CSSProperties> => ({
 })
 
 interface Props {
-  classes: Record<'textField', string>
   definedClasses: Record<string, string>
   initialValue: string
   onLeaveEditMode: (value: string) => void
 }
 
+interface InternalProps extends ContextOption, Props {
+  classes: Record<'textField', string>
+}
+
 interface State {
   isEditing: boolean
+  isLoggedIn: boolean
   value: string
 }
 
-class EditableLabel extends React.Component<Props, State> {
-  constructor (props: Props) {
+class EditableLabel extends React.Component<InternalProps, State> {
+  private auth: firebase.auth.Auth
+
+  constructor (props: InternalProps) {
     super(props)
-    this.setStateFromProps(props)
-  }
-
-  componentWillReceiveProps (newProps: Props): void {
-    this.setStateFromProps(newProps)
-  }
-
-  private setStateFromProps (props: Props): void {
     const { initialValue } = props
     this.state = {
       isEditing: initialValue === '',
+      isLoggedIn: false,
       value: initialValue
     }
+    this.auth = firebase.auth()
+  }
+
+  componentWillMount () {
+    this.auth.onAuthStateChanged(user => {
+      this.setState({ isLoggedIn: user != null })
+    })
+  }
+
+  componentWillReceiveProps (newProps: Props) {
+    const { initialValue } = newProps
+    this.setState({
+      isEditing: initialValue === '',
+      value: initialValue
+    })
   }
 
   private handleDoubleClick = () => this.setState({ isEditing: true })
@@ -54,10 +71,10 @@ class EditableLabel extends React.Component<Props, State> {
 
   render () {
     const { classes, definedClasses } = this.props
-    const { isEditing, value } = this.state
+    const { isEditing, isLoggedIn, value } = this.state
     return (
       <CardContent className={definedClasses.card3}>
-        {isEditing ? (
+        {isEditing && isLoggedIn ? (
           <TextField
             className={classes.textField}
             onChange={evt => this.setState({ value: evt.target.value })}
@@ -74,4 +91,4 @@ class EditableLabel extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(style)(EditableLabel)
+export default withFirebase<Props>(withStyles(style)(EditableLabel))
