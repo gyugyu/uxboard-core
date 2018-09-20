@@ -21,7 +21,11 @@ import withFirebase from '../firebase/withFirebase'
 import EditableLabel from './EditableLabel'
 import { TaskStatus } from './interfaces'
 
+<<<<<<< HEAD
+const style = (theme: Theme): Record<'yet' | 'doing' | 'done', CSSProperties> => ({
+=======
 const style: Record<'yet' | 'doing' | 'done', CSSProperties> = {
+>>>>>>> 61b78c49e85406d2eccd5e6b9acff0115d82c921
   doing: {
     backgroundColor: orange.A100
   },
@@ -60,6 +64,7 @@ class Task extends React.Component<IInternalProps, IState> {
     open: false,
     status: TaskStatus.Yet,
     title: ''
+<<<<<<< HEAD
   }
 
   private taskRef?: firebase.database.Reference
@@ -129,6 +134,77 @@ class Task extends React.Component<IInternalProps, IState> {
     )
   }
 
+=======
+  }
+
+  private taskRef?: firebase.database.Reference
+
+  public componentWillMount () {
+    this.setTaskRef(this.props)
+  }
+
+  public componentWillReceiveProps (newProps: IInternalProps) {
+    this.setTaskRef(newProps)
+  }
+
+  public render (): React.ReactNode {
+    const { classes, definedClasses } = this.props
+    const { anchorEl, title, status, open } = this.state
+    return (
+      <Grid item={true}>
+        <Card className={classnames({
+          [classes.yet]: status === TaskStatus.Yet,
+          [classes.doing]: status === TaskStatus.Doing,
+          [classes.done]: status === TaskStatus.Done,
+          [definedClasses.card]: true
+        })}>
+          <EditableLabel
+            definedClasses={definedClasses}
+            initialValue={title}
+            onLeaveEditMode={this.handleLeaveEditMode}
+          />
+          <Auth>
+            {auth => auth && (
+              <CardActions>
+                {this.taskRef && (
+                  <div>
+                    <IconButton onClick={this.handleMoreClick}>
+                      <MoreVertIcon />
+                    </IconButton>
+                    <Menu anchorEl={anchorEl} onClose={this.handleClose} open={open}>
+                      <MenuItem
+                        disabled={status === TaskStatus.Yet}
+                        onClick={this.createHandleClickMenuItem(TaskStatus.Yet)}
+                      >
+                        Mark as yet
+                      </MenuItem>
+                      <MenuItem
+                        disabled={status === TaskStatus.Doing}
+                        onClick={this.createHandleClickMenuItem(TaskStatus.Doing)}
+                      >
+                        Mark as doing
+                      </MenuItem>
+                      <MenuItem
+                        disabled={status === TaskStatus.Done}
+                        onClick={this.createHandleClickMenuItem(TaskStatus.Done)}
+                      >
+                        <ListItemIcon>
+                          <DoneIcon />
+                        </ListItemIcon>
+                        <ListItemText inset={true} primary='Mark as done' />
+                      </MenuItem>
+                    </Menu>
+                  </div>
+                )}
+              </CardActions>
+            )}
+          </Auth>
+        </Card>
+      </Grid>
+    )
+  }
+
+>>>>>>> 61b78c49e85406d2eccd5e6b9acff0115d82c921
   private setTaskRef (props: IInternalProps): void {
     const { databasePrefix, firebase: firebaseApp, id } = props
     if (id != null && this.taskRef == null) {

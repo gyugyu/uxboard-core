@@ -1,15 +1,27 @@
 import CardContent from '@material-ui/core/CardContent'
+<<<<<<< HEAD
+import { Theme } from '@material-ui/core/styles/createMuiTheme'
+=======
+>>>>>>> 61b78c49e85406d2eccd5e6b9acff0115d82c921
 import withStyles, { CSSProperties } from '@material-ui/core/styles/withStyles'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import * as React from 'react'
 import Auth from '../Auth'
 
+<<<<<<< HEAD
+const style = (theme: Theme): Record<'textField', CSSProperties> => ({
+  textField: {
+    width: '100%'
+  }
+})
+=======
 const style: Record<'textField', CSSProperties> = {
   textField: {
     width: '100%'
   }
 }
+>>>>>>> 61b78c49e85406d2eccd5e6b9acff0115d82c921
 
 interface IProps {
   classes: Record<'textField', string>

@@ -7,6 +7,10 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
+<<<<<<< HEAD
+import { Theme } from '@material-ui/core/styles/createMuiTheme'
+=======
+>>>>>>> 61b78c49e85406d2eccd5e6b9acff0115d82c921
 import withStyles, { CSSProperties } from '@material-ui/core/styles/withStyles'
 import DeleteIcon from '@material-ui/icons/Delete'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
@@ -19,7 +23,11 @@ import withFirebase from '../firebase/withFirebase'
 import EditableLabel from './EditableLabel'
 import { IDimension } from './interfaces'
 
+<<<<<<< HEAD
+const style = (theme: Theme): Record<'card', CSSProperties> => ({
+=======
 const style: Record<'card', CSSProperties> = {
+>>>>>>> 61b78c49e85406d2eccd5e6b9acff0115d82c921
   card: {
     backgroundColor: lightGreen.A100
   }
