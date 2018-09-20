@@ -19,6 +19,7 @@ dist: artifacts
 	@git config user.name 'Royer Peby Depp' && git config user.email 'tec-github-pb-deployer@ml.paperboy.co.jp'
 	git checkout -b $(ARTIFACTS_BRANCH)
 	git add . -f
+	git reset -- node_modules
 	git commit -m "[ci skip] add artifacts for $(REVISION)" --allow-empty
 	git push -f origin $(ARTIFACTS_BRANCH)
 	git tag -f "v$(VERSION)-$(REVISION)"
