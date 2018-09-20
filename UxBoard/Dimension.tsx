@@ -15,49 +15,49 @@ import classnames from 'classnames'
 import * as firebase from 'firebase'
 import * as React from 'react'
 import Auth from '../Auth'
-import { ContextOption } from '../firebase/FirebaseContext'
+import { IContextOption } from '../firebase/FirebaseContext'
 import withFirebase from '../firebase/withFirebase'
 import EditableLabel from './EditableLabel'
 import { IDimension } from './interfaces'
 
-const style = (_theme: Theme): Record<'card', CSSProperties> => ({
+const style = (theme: Theme): Record<'card', CSSProperties> => ({
   card: {
     backgroundColor: lightGreen.A100
   }
 })
 
-interface Props {
+interface IProps {
   definedClasses: Record<string, string>
   id: string
   dbRef: firebase.database.Reference
 }
 
-interface InternalProps extends ContextOption, Props {
+interface IInternalProps extends IContextOption, IProps {
   classes: Record<'card', string>
 }
 
-interface State extends IDimension {
+interface IState extends IDimension {
   anchorEl: EventTarget & HTMLElement | null
   open: boolean
 }
 
-class Dimension extends React.Component<InternalProps, State> {
-  private dbRef: firebase.database.Reference
-
-  state = {
+class Dimension extends React.Component<IInternalProps, IState> {
+  public state = {
     anchorEl: null,
     name: '',
     open: false,
     tasks: undefined
   }
 
-  constructor (props: InternalProps) {
+  private dbRef: firebase.database.Reference
+
+  constructor (props: IInternalProps) {
     super(props)
     const { id, dbRef } = props
     this.dbRef = dbRef.child(id)
   }
 
-  componentWillMount () {
+  public componentWillMount () {
     this.dbRef.on('value', snapshot => {
       if (snapshot != null) {
         const dimension = snapshot.val() as IDimension | undefined
@@ -68,30 +68,7 @@ class Dimension extends React.Component<InternalProps, State> {
     })
   }
 
-  private handleLeaveEditMode = (name: string): void => {
-    this.dbRef.update({ name })
-    this.setState({ name })
-  }
-
-  private handleClickDelete = async (): Promise<void> => {
-    const { databasePrefix, firebase, id } = this.props
-    const { tasks } = this.state
-    let update: Record<string, null> = {
-      [`${databasePrefix}/dimensions/${id}`]: null
-    }
-    if (tasks != null) {
-      update = Object.keys(tasks).reduce<Record<string, null>>((pre, cur) => {
-        return {
-          ...pre,
-          [`${databasePrefix}/tasks/${cur}`]: null
-        }
-      }, update)
-    }
-    const ref = firebase.database().ref()
-    await ref.update(update)
-  }
-
-  render () {
+  public render () {
     const { classes, definedClasses } = this.props
     const { anchorEl, name, open } = this.state
     return (
@@ -106,18 +83,11 @@ class Dimension extends React.Component<InternalProps, State> {
             {user => user && (
               <CardActions>
                 <div>
-                  <IconButton onClick={evt => this.setState({
-                    anchorEl: evt.currentTarget,
-                    open: true
-                  })}>
+                  <IconButton onClick={this.handleMoreClick}>
                     <MoreVertIcon />
                   </IconButton>
-                  <Menu 
-                    anchorEl={anchorEl}
-                    onClose={() => this.setState({ anchorEl: null, open: false })}
-                    open={open}
-                  >
-                    <MenuItem onClick={this.handleClickDelete}>
+                  <Menu anchorEl={anchorEl} onClose={this.handleClose} open={open}>
+                    <MenuItem onClick={this.handleDeleteClick}>
                       <ListItemIcon>
                         <DeleteIcon />
                       </ListItemIcon>
@@ -132,6 +102,35 @@ class Dimension extends React.Component<InternalProps, State> {
       </Grid>
     )
   }
+
+  private handleLeaveEditMode = (name: string) => {
+    this.dbRef.update({ name })
+    this.setState({ name })
+  }
+
+  private handleMoreClick = (evt: React.MouseEvent<HTMLElement>) => {
+    this.setState({ anchorEl: evt.currentTarget, open: true })
+  }
+
+  private handleClose = () => this.setState({ anchorEl: null, open: false })
+
+  private handleDeleteClick = async (): Promise<void> => {
+    const { databasePrefix, firebase: firebaseApp, id } = this.props
+    const { tasks } = this.state
+    let update: Record<string, null> = {
+      [`${databasePrefix}/dimensions/${id}`]: null
+    }
+    if (tasks != null) {
+      update = Object.keys(tasks).reduce<Record<string, null>>((pre, cur) => {
+        return {
+          ...pre,
+          [`${databasePrefix}/tasks/${cur}`]: null
+        }
+      }, update)
+    }
+    const ref = firebaseApp.database().ref()
+    await ref.update(update)
+  }
 }
 
-export default withFirebase<Props>(withStyles(style)(Dimension))
+export default withFirebase<IProps>(withStyles(style)(Dimension))

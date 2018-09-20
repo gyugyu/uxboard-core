@@ -5,32 +5,27 @@ import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import * as React from 'react'
 import Auth from '../Auth'
-import { ContextOption } from '../firebase/FirebaseContext'
-import withFirebase from '../firebase/withFirebase'
 
-const style = (_theme: Theme): Record<'textField', CSSProperties> => ({
+const style = (theme: Theme): Record<'textField', CSSProperties> => ({
   textField: {
     width: '100%'
   }
 })
 
-interface Props {
+interface IProps {
+  classes: Record<'textField', string>
   definedClasses: Record<string, string>
   initialValue: string
   onLeaveEditMode: (value: string) => void
 }
 
-interface InternalProps extends ContextOption, Props {
-  classes: Record<'textField', string>
-}
-
-interface State {
+interface IState {
   isEditing: boolean
   value: string
 }
 
-class EditableLabel extends React.Component<InternalProps, State> {
-  constructor (props: InternalProps) {
+class EditableLabel extends React.Component<IProps, IState> {
+  constructor (props: IProps) {
     super(props)
     const { initialValue } = props
     this.state = {
@@ -39,7 +34,7 @@ class EditableLabel extends React.Component<InternalProps, State> {
     }
   }
 
-  componentWillReceiveProps (newProps: Props) {
+  public componentWillReceiveProps (newProps: IProps) {
     const { initialValue } = newProps
     this.setState({
       isEditing: initialValue === '',
@@ -47,18 +42,7 @@ class EditableLabel extends React.Component<InternalProps, State> {
     })
   }
 
-  private handleDoubleClick = () => this.setState({ isEditing: true })
-
-  private handleKeyUp = (evt: React.KeyboardEvent): void => {
-    const { onLeaveEditMode } = this.props
-    const { value } = this.state
-    if (evt.keyCode === 13 && evt.shiftKey && value !== '') {
-      this.setState({ isEditing: false })
-      onLeaveEditMode(value)
-    }
-  }
-
-  render () {
+  public render (): React.ReactNode {
     const { classes, definedClasses } = this.props
     const { isEditing, value } = this.state
     return (
@@ -67,7 +51,7 @@ class EditableLabel extends React.Component<InternalProps, State> {
           {user => user && isEditing ? (
             <TextField
               className={classes.textField}
-              onChange={evt => this.setState({ value: evt.target.value })}
+              onChange={this.handleChange}
               onKeyUp={this.handleKeyUp}
               value={value}
             />
@@ -80,6 +64,21 @@ class EditableLabel extends React.Component<InternalProps, State> {
       </CardContent>
     )
   }
+
+  private handleDoubleClick = () => this.setState({ isEditing: true })
+
+  private handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({ value: evt.target.value })
+  }
+
+  private handleKeyUp = (evt: React.KeyboardEvent): void => {
+    const { onLeaveEditMode } = this.props
+    const { value } = this.state
+    if (evt.keyCode === 13 && evt.shiftKey && value !== '') {
+      this.setState({ isEditing: false })
+      onLeaveEditMode(value)
+    }
+  }
 }
 
-export default withFirebase<Props>(withStyles(style)(EditableLabel))
+export default withStyles(style)(EditableLabel)

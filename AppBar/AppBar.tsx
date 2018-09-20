@@ -6,7 +6,7 @@ import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import * as firebase from 'firebase'
 import * as React from 'react'
-import { ContextOption } from '../firebase/FirebaseContext'
+import { IContextOption } from '../firebase/FirebaseContext'
 import withFirebase from '../firebase/withFirebase'
 
 const styles = (theme: Theme): Record<string, CSSProperties> => ({
@@ -19,55 +19,59 @@ const styles = (theme: Theme): Record<string, CSSProperties> => ({
   }
 })
 
-interface InternalProps extends ContextOption {
+interface IInternalProps extends IContextOption {
   classes: Record<string, string>
 }
 
-interface State {
+interface IState {
   isLoggedIn: boolean
 }
 
-class AppBar extends React.Component<InternalProps, State> {
+class AppBar extends React.Component<IInternalProps, IState> {
+  public state = {
+    isLoggedIn: false
+  }
+
   private auth: firebase.auth.Auth
 
-  constructor (props: InternalProps) {
+  constructor (props: IInternalProps) {
     super(props)
     this.auth = props.firebase.auth()
   }
 
-  state = {
-    isLoggedIn: false
-  }
-
-  componentDidMount () {
+  public componentDidMount () {
     this.auth.onAuthStateChanged(user => {
       this.setState({ isLoggedIn: user != null })
     })
+  }
+
+  public render () {
+    const { classes } = this.props
+    const { isLoggedIn } = this.state
+    return (
+      <div className={classes.root}>
+        <MuiAppBar position='static'>
+          <Toolbar>
+            <Typography variant='title' color='inherit' className={classes.grow}>
+              UX Board
+            </Typography>
+            {isLoggedIn ? (
+              <Button color='inherit' onClick={this.handleLogoutClick}>Logout</Button>
+            ) : (
+              <Button color='inherit' onClick={this.handleLoginClick}>Login</Button>
+            )}
+          </Toolbar>
+        </MuiAppBar>
+      </div>
+    )
   }
 
   private handleLoginClick = () => {
     this.auth.signInWithRedirect(this.props.authProvider)
   }
 
-  render () {
-    const { classes } = this.props
-    const { isLoggedIn } = this.state
-    return (
-      <div className={classes.root}>
-        <MuiAppBar position="static">
-          <Toolbar>
-            <Typography variant="title" color="inherit" className={classes.grow}>
-              UX Board
-            </Typography>
-            {isLoggedIn ? (
-              <Button color="inherit" onClick={() => this.auth.signOut()}>Logout</Button>
-            ) : (
-              <Button color="inherit" onClick={this.handleLoginClick}>Login</Button>
-            )}
-          </Toolbar>
-        </MuiAppBar>
-      </div>
-    )
+  private handleLogoutClick = () => {
+    this.auth.signOut()
   }
 }
 

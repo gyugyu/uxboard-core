@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography'
 import classnames from 'classnames'
 import * as firebase from 'firebase'
 import * as React from 'react'
-import { ContextOption } from '../firebase/FirebaseContext'
+import { IContextOption } from '../firebase/FirebaseContext'
 import withFirebase from '../firebase/withFirebase'
 import AddDimensionButton from './AddDimensionButton'
 import DimensionArea from './DimensionArea'
@@ -18,10 +18,10 @@ const styles: Record<string, CSSProperties> = {
     overflowY: 'hidden'
   },
   card: {
-    width: 240,
     height: 120,
     overflowX: 'hidden',
-    overflowY: 'scroll'
+    overflowY: 'scroll',
+    width: 240
   },
   container: {
     flexWrap: 'nowrap'
@@ -39,28 +39,28 @@ const styles: Record<string, CSSProperties> = {
   }
 }
 
-interface InternalProps extends ContextOption {
+interface IInternalProps extends IContextOption {
   classes: Record<string, string>
 }
 
-type State = {
+interface IState {
   indices: IIndex[]
 }
 
-class App extends React.Component<InternalProps, State> {
-  private dbRef: firebase.database.Reference
-
-  state = {
+class App extends React.Component<IInternalProps, IState> {
+  public state = {
     indices: [] as IIndex[],
   }
 
-  constructor (props: InternalProps) {
+  private dbRef: firebase.database.Reference
+
+  constructor (props: IInternalProps) {
     super(props)
-    const { databasePrefix, firebase } = props
-    this.dbRef = firebase.database().ref(`${databasePrefix}/indices`)
+    const { databasePrefix, firebase: firebaseApp } = props
+    this.dbRef = firebaseApp.database().ref(`${databasePrefix}/indices`)
   }
 
-  componentWillMount () {
+  public componentWillMount () {
     this.dbRef.on('value', snapshot => {
       if (snapshot != null) {
         const indices = snapshot.val() as IIndex[] | undefined
@@ -71,7 +71,7 @@ class App extends React.Component<InternalProps, State> {
     })
   }
 
-  render () {
+  public render (): React.ReactNode {
     const { classes } = this.props
     const { indices } = this.state
     return (

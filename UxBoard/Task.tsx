@@ -17,20 +17,20 @@ import classnames from 'classnames'
 import * as firebase from 'firebase'
 import * as React from 'react'
 import Auth from '../Auth'
-import { ContextOption } from '../firebase/FirebaseContext'
+import { IContextOption } from '../firebase/FirebaseContext'
 import withFirebase from '../firebase/withFirebase'
-import { TaskStatus } from './interfaces'
 import EditableLabel from './EditableLabel'
+import { TaskStatus } from './interfaces'
 
-const style = (_theme: Theme): Record<'yet' | 'doing' | 'done', CSSProperties> => ({
-  yet: {
-    backgroundColor: yellow.A100
-  },
+const style = (theme: Theme): Record<'yet' | 'doing' | 'done', CSSProperties> => ({
   doing: {
     backgroundColor: orange.A100
   },
   done: {
     backgroundColor: pink.A100
+  },
+  yet: {
+    backgroundColor: yellow.A100
   }
 })
 
@@ -39,84 +39,41 @@ interface ITask {
   status: TaskStatus
 }
 
-interface Props {
+interface IProps {
   definedClasses: Record<string, string>
   dimensionId: string
   id?: string
   indexId: string
 }
 
-interface InternalProps extends Props, ContextOption {
+interface IInternalProps extends IContextOption, IProps {
   classes: Record<'yet' | 'doing' | 'done', string>
 }
 
-interface State extends ITask {
+interface IState extends ITask {
   anchorEl: EventTarget & HTMLElement | null
   open: boolean
 }
 
-class Task extends React.Component<InternalProps, State> {
+class Task extends React.Component<IInternalProps, IState> {
+  public state = {
+    anchorEl: null,
+    open: false,
+    status: TaskStatus.Yet,
+    title: ''
+  }
+
   private taskRef?: firebase.database.Reference
 
-  state = {
-    anchorEl: null,
-    title: '',
-    open: false,
-    status: TaskStatus.Yet
-  }
-
-  private setTaskRef (props: InternalProps): void {
-    const { databasePrefix, firebase, id } = props
-    if (id != null && this.taskRef == null) {
-      this.taskRef = firebase.database().ref(`${databasePrefix}/tasks`).child(id)
-      this.taskRef.on('value', snapshot => {
-        if (snapshot != null) {
-          const task = snapshot.val() as ITask | undefined
-          if (task != null) {
-            this.setState({ ...task })
-          }
-        }
-      })
-    }
-  }
-
-  componentWillMount () {
+  public componentWillMount () {
     this.setTaskRef(this.props)
   }
 
-  componentWillReceiveProps (newProps: InternalProps) {
+  public componentWillReceiveProps (newProps: IInternalProps) {
     this.setTaskRef(newProps)
   }
 
-  private handleLeaveEditMode = async (title: string): Promise<void> => {
-    const { databasePrefix, dimensionId, firebase, indexId } = this.props
-    const db = firebase.database()
-    if (this.taskRef == null) {
-      this.taskRef = db.ref(`${databasePrefix}/tasks`).push()
-      const newTaskId = this.taskRef.key
-      const updates = {
-        [`${databasePrefix}/indices/${indexId}/tasks/${newTaskId}`]: true,
-        [`${databasePrefix}/dimensions/${dimensionId}/tasks/${newTaskId}`]: true,
-        [`${databasePrefix}/tasks/${newTaskId}`]: {
-          title,
-          status: TaskStatus.Yet
-        }
-      }
-      await db.ref().update(updates)
-    } else {
-      await this.taskRef.update({ title })
-    }
-    this.setState({ title })
-  }
-
-  private createHandleClickMenuItem = (status: TaskStatus) => async (): Promise<void> => {
-    if (this.taskRef != null) {
-      await this.taskRef.update({ status })
-    }
-    this.setState({ open: false, status })
-  }
-
-  render () {
+  public render (): React.ReactNode {
     const { classes, definedClasses } = this.props
     const { anchorEl, title, status, open } = this.state
     return (
@@ -137,17 +94,10 @@ class Task extends React.Component<InternalProps, State> {
               <CardActions>
                 {this.taskRef && (
                   <div>
-                    <IconButton onClick={evt => this.setState({
-                      anchorEl: evt.currentTarget,
-                      open: true
-                    })}>
+                    <IconButton onClick={this.handleMoreClick}>
                       <MoreVertIcon />
                     </IconButton>
-                    <Menu 
-                      anchorEl={anchorEl}
-                      onClose={() => this.setState({ anchorEl: null, open: false })}
-                      open={open}
-                    >
+                    <Menu anchorEl={anchorEl} onClose={this.handleClose} open={open}>
                       <MenuItem
                         disabled={status === TaskStatus.Yet}
                         onClick={this.createHandleClickMenuItem(TaskStatus.Yet)}
@@ -179,6 +129,55 @@ class Task extends React.Component<InternalProps, State> {
       </Grid>
     )
   }
+
+  private setTaskRef (props: IInternalProps): void {
+    const { databasePrefix, firebase: firebaseApp, id } = props
+    if (id != null && this.taskRef == null) {
+      this.taskRef = firebaseApp.database().ref(`${databasePrefix}/tasks`).child(id)
+      this.taskRef.on('value', snapshot => {
+        if (snapshot != null) {
+          const task = snapshot.val() as ITask | undefined
+          if (task != null) {
+            this.setState({ ...task })
+          }
+        }
+      })
+    }
+  }
+
+  private handleMoreClick = (evt: React.MouseEvent<EventTarget & HTMLElement>) => {
+    this.setState({ anchorEl: evt.currentTarget, open: true })
+  }
+
+  private handleClose = () => this.setState({ anchorEl: null, open: false })
+
+  private handleLeaveEditMode = async (title: string): Promise<void> => {
+    const { databasePrefix, dimensionId, firebase: firebaseApp, indexId } = this.props
+    const db = firebaseApp.database()
+    if (this.taskRef == null) {
+      this.taskRef = db.ref(`${databasePrefix}/tasks`).push()
+      const newTaskId = this.taskRef.key
+      const updates = {
+        [`${databasePrefix}/indices/${indexId}/tasks/${newTaskId}`]: true,
+        [`${databasePrefix}/dimensions/${dimensionId}/tasks/${newTaskId}`]: true,
+        [`${databasePrefix}/tasks/${newTaskId}`]: {
+          status: TaskStatus.Yet,
+          title
+        }
+      }
+      await db.ref().update(updates)
+    } else {
+      await this.taskRef.update({ title })
+    }
+    this.setState({ title })
+  }
+
+  private createHandleClickMenuItem = (status: TaskStatus) => async (): Promise<void> => {
+    if (this.taskRef != null) {
+      await this.taskRef.update({ status })
+    }
+    this.setState({ open: false, status })
+  }
 }
 
-export default withFirebase<Props>(withStyles(style)(Task))
+export default withFirebase<IProps>(withStyles(style)(Task))

@@ -3,15 +3,15 @@ import * as React from 'react'
 import { IDimension, IIndex } from './interfaces'
 import Task from './Task'
 
-interface Props {
+interface IProps {
   definedClasses: Record<string, string>
   dimension: IDimension
   id: string
   indices: IIndex[]
 }
 
-export default class DimensionTasks extends React.Component<Props> {
-  render () {
+export default class DimensionTasks extends React.Component<IProps> {
+  public render (): React.ReactNode {
     const { definedClasses, dimension, indices, id } = this.props
     const tasks = dimension.tasks || {}
     const taskIds = Object.keys(tasks).filter(k => tasks[k])
@@ -26,7 +26,7 @@ export default class DimensionTasks extends React.Component<Props> {
             let taskId: string | undefined
             const { tasks: iTasks } = index
             if (iTasks != null) {
-              taskId = taskIds.find(id => iTasks[id])
+              taskId = taskIds.find(tid => iTasks[tid])
             }
             return (
               <Task

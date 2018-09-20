@@ -1,38 +1,37 @@
 import Grid from '@material-ui/core/Grid'
 import * as firebase from 'firebase'
 import * as React from 'react'
-import { ContextOption } from '../firebase/FirebaseContext'
+import { IContextOption } from '../firebase/FirebaseContext'
 import withFirebase from '../firebase/withFirebase'
 import Dimension from './Dimension'
 import DimensionTasks from './DimensionTasks'
 import { IDimension, IIndex } from './interfaces'
 
-interface Props {
+interface IProps {
   definedClasses: Record<string, string>
   indices: IIndex[]
 }
 
-interface InternalProps extends ContextOption, Props {
-}
+type InternalProps = IContextOption & IProps
 
-interface State {
+interface IState {
   dimensions: Record<string, IDimension>
 }
 
-class DimensionArea extends React.Component<InternalProps, State> {
-  private dbRef: firebase.database.Reference
-
-  state = {
+class DimensionArea extends React.Component<InternalProps, IState> {
+  public state = {
     dimensions: {} as Record<string, IDimension>
   }
 
+  private dbRef: firebase.database.Reference
+
   constructor (props: InternalProps) {
     super(props)
-    const { databasePrefix, firebase } = props
-    this.dbRef = firebase.database().ref(`${databasePrefix}/dimensions`)
+    const { databasePrefix, firebase: firebaseApp } = props
+    this.dbRef = firebaseApp.database().ref(`${databasePrefix}/dimensions`)
   }
 
-  componentWillMount () {
+  public componentWillMount () {
     this.dbRef.on('value', snapshot => {
       if (snapshot != null) {
         const dimensions = snapshot.val() as Record<string, IDimension> | undefined
@@ -43,7 +42,7 @@ class DimensionArea extends React.Component<InternalProps, State> {
     })
   }
 
-  render () {
+  public render (): React.ReactNode {
     const { definedClasses, indices } = this.props
     const { dimensions } = this.state
     return (
@@ -94,4 +93,4 @@ class DimensionArea extends React.Component<InternalProps, State> {
   }
 }
 
-export default withFirebase<Props>(DimensionArea)
+export default withFirebase<IProps>(DimensionArea)

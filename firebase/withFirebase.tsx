@@ -1,14 +1,14 @@
 import * as React from 'react'
-import FirebaseContext, { ContextOption } from './FirebaseContext'
+import FirebaseContext, { IContextOption } from './FirebaseContext'
 
 export default function withFirebase<T> (
-  Component: React.ComponentType<T & ContextOption>
+  Component: React.ComponentType<T & IContextOption>
 ): React.ComponentType<T> {
   class WithFirebase extends React.Component<T> {
-    render () {
+    public render () {
       return (
         <FirebaseContext.Consumer>
-          {(option) => (
+          {option => (
             <Component {...this.props} {...option} />
           )}
         </FirebaseContext.Consumer>
