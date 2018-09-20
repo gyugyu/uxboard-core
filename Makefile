@@ -10,8 +10,7 @@ ARTIFACTS_BRANCH = do-not-delete--included-artifacts
 
 artifacts:
 	@echo "$(INFO_COLOR)==> $(RESET)$(BOLD)Creating artifacts$(RESET)"
-	npm install -g npm@latest
-	npm ci --silent
+	npm install --silent
 	npm run build
 
 dist: artifacts

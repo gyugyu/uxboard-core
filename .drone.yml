@@ -2,6 +2,7 @@ build:
   test:
     image: node:10.10.0
     commands:
+      - npm audit
       - make artifacts
   push:
     image: node:10.10.0
