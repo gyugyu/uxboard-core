@@ -7,7 +7,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
-import { Theme } from '@material-ui/core/styles/createMuiTheme'
 import withStyles, { CSSProperties } from '@material-ui/core/styles/withStyles'
 import DeleteIcon from '@material-ui/icons/Delete'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
@@ -20,11 +19,11 @@ import withFirebase from '../firebase/withFirebase'
 import EditableLabel from './EditableLabel'
 import { IDimension } from './interfaces'
 
-const style = (theme: Theme): Record<'card', CSSProperties> => ({
+const style: Record<'card', CSSProperties> = {
   card: {
     backgroundColor: lightGreen.A100
   }
-})
+}
 
 interface IProps {
   definedClasses: Record<string, string>
