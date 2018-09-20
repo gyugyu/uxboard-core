@@ -9,7 +9,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
-import { Theme } from '@material-ui/core/styles/createMuiTheme'
 import withStyles, { CSSProperties } from '@material-ui/core/styles/withStyles'
 import DoneIcon from '@material-ui/icons/Done'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
@@ -22,7 +21,7 @@ import withFirebase from '../firebase/withFirebase'
 import EditableLabel from './EditableLabel'
 import { TaskStatus } from './interfaces'
 
-const style = (theme: Theme): Record<'yet' | 'doing' | 'done', CSSProperties> => ({
+const style: Record<'yet' | 'doing' | 'done', CSSProperties> = {
   doing: {
     backgroundColor: orange.A100
   },
@@ -32,7 +31,7 @@ const style = (theme: Theme): Record<'yet' | 'doing' | 'done', CSSProperties> =>
   yet: {
     backgroundColor: yellow.A100
   }
-})
+}
 
 interface ITask {
   title: string
