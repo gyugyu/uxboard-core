@@ -5,10 +5,13 @@ import pink from '@material-ui/core/colors/pink'
 import yellow from '@material-ui/core/colors/yellow'
 import Grid from '@material-ui/core/Grid'
 import IconButton from '@material-ui/core/IconButton'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import { Theme } from '@material-ui/core/styles/createMuiTheme'
 import withStyles, { CSSProperties } from '@material-ui/core/styles/withStyles'
+import DoneIcon from '@material-ui/icons/Done'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import classnames from 'classnames'
 import * as firebase from 'firebase'
@@ -61,8 +64,8 @@ class Task extends React.Component<InternalProps, State> {
     status: TaskStatus.Yet
   }
 
-  private setTaskRef (): void {
-    const { databasePrefix, firebase, id } = this.props
+  private setTaskRef (props: InternalProps): void {
+    const { databasePrefix, firebase, id } = props
     if (id != null && this.taskRef == null) {
       this.taskRef = firebase.database().ref(`${databasePrefix}/tasks`).child(id)
       this.taskRef.on('value', snapshot => {
@@ -77,14 +80,14 @@ class Task extends React.Component<InternalProps, State> {
   }
 
   componentWillMount () {
-    this.setTaskRef()
+    this.setTaskRef(this.props)
   }
 
-  componentWillReceiveProps () {
-    this.setTaskRef()
+  componentWillReceiveProps (newProps: InternalProps) {
+    this.setTaskRef(newProps)
   }
 
-  private handleLeaveEditMode = (title: string): void => {
+  private handleLeaveEditMode = async (title: string): Promise<void> => {
     const { databasePrefix, dimensionId, firebase, indexId } = this.props
     const db = firebase.database()
     if (this.taskRef == null) {
@@ -98,16 +101,16 @@ class Task extends React.Component<InternalProps, State> {
           status: TaskStatus.Yet
         }
       }
-      db.ref().update(updates)
+      await db.ref().update(updates)
     } else {
-      this.taskRef.update({ title })
+      await this.taskRef.update({ title })
     }
     this.setState({ title })
   }
 
-  private createHandleClickMenuItem = (status: TaskStatus) => (): void => {
+  private createHandleClickMenuItem = (status: TaskStatus) => async (): Promise<void> => {
     if (this.taskRef != null) {
-      this.taskRef.update({ status })
+      await this.taskRef.update({ status })
     }
     this.setState({ open: false, status })
   }
@@ -121,7 +124,7 @@ class Task extends React.Component<InternalProps, State> {
           [classes.yet]: status === TaskStatus.Yet,
           [classes.doing]: status === TaskStatus.Doing,
           [classes.done]: status === TaskStatus.Done,
-          [definedClasses.card2]: true
+          [definedClasses.card]: true
         })}>
           <EditableLabel
             definedClasses={definedClasses}
@@ -139,21 +142,27 @@ class Task extends React.Component<InternalProps, State> {
                   onClose={() => this.setState({ anchorEl: null, open: false })}
                   open={open}
                 >
-                  {status !== TaskStatus.Yet && (
-                    <MenuItem onClick={this.createHandleClickMenuItem(TaskStatus.Yet)}>
+                  <MenuItem
+                    disabled={status === TaskStatus.Yet}
+                    onClick={this.createHandleClickMenuItem(TaskStatus.Yet)}
+                  >
                       Mark as yet
-                    </MenuItem>
-                  )}
-                  {status !== TaskStatus.Doing && (
-                    <MenuItem onClick={this.createHandleClickMenuItem(TaskStatus.Doing)}>
-                      Mark as doing
-                    </MenuItem>
-                  )}
-                  {status !== TaskStatus.Done && (
-                    <MenuItem onClick={this.createHandleClickMenuItem(TaskStatus.Done)}>
-                      Mark as done
-                    </MenuItem>
-                  )}
+                  </MenuItem>
+                  <MenuItem
+                    disabled={status === TaskStatus.Doing}
+                    onClick={this.createHandleClickMenuItem(TaskStatus.Doing)}
+                  >
+                    Mark as doing
+                  </MenuItem>
+                  <MenuItem
+                    disabled={status === TaskStatus.Done}
+                    onClick={this.createHandleClickMenuItem(TaskStatus.Done)}
+                  >
+                    <ListItemIcon>
+                      <DoneIcon />
+                    </ListItemIcon>
+                    <ListItemText inset={true} primary='Mark as done' />
+                  </MenuItem>
                 </Menu>
               </div>
             )}

@@ -1,9 +1,18 @@
 import CardContent from '@material-ui/core/CardContent'
+import { Theme } from '@material-ui/core/styles/createMuiTheme'
+import withStyles, { CSSProperties } from '@material-ui/core/styles/withStyles'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import * as React from 'react'
 
+const style = (_theme: Theme): Record<'textField', CSSProperties> => ({
+  textField: {
+    width: '100%'
+  }
+})
+
 interface Props {
+  classes: Record<'textField', string>
   definedClasses: Record<string, string>
   initialValue: string
   onLeaveEditMode: (value: string) => void
@@ -14,7 +23,7 @@ interface State {
   value: string
 }
 
-export default class EditableLabel extends React.Component<Props, State> {
+class EditableLabel extends React.Component<Props, State> {
   constructor (props: Props) {
     super(props)
     this.setStateFromProps(props)
@@ -44,18 +53,19 @@ export default class EditableLabel extends React.Component<Props, State> {
   }
 
   render () {
-    const { definedClasses } = this.props
+    const { classes, definedClasses } = this.props
     const { isEditing, value } = this.state
     return (
       <CardContent className={definedClasses.card3}>
         {isEditing ? (
           <TextField
-            value={value}
-            onKeyUp={this.handleKeyUp}
+            className={classes.textField}
             onChange={evt => this.setState({ value: evt.target.value })}
+            onKeyUp={this.handleKeyUp}
+            value={value}
           />
         ) : (
-          <Typography variant='title' onDoubleClick={this.handleDoubleClick}>
+          <Typography variant='subheading' onDoubleClick={this.handleDoubleClick}>
             {value}
           </Typography>
         )}
@@ -63,3 +73,5 @@ export default class EditableLabel extends React.Component<Props, State> {
     )
   }
 }
+
+export default withStyles(style)(EditableLabel)

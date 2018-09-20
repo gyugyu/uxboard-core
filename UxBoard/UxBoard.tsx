@@ -3,6 +3,7 @@ import CardContent from '@material-ui/core/CardContent'
 import Grid from '@material-ui/core/Grid'
 import withStyles, { CSSProperties } from '@material-ui/core/styles/withStyles'
 import Typography from '@material-ui/core/Typography'
+import classnames from 'classnames'
 import * as firebase from 'firebase'
 import * as React from 'react'
 import { ContextOption } from '../firebase/FirebaseContext'
@@ -17,23 +18,18 @@ const styles: Record<string, CSSProperties> = {
     overflowY: 'hidden'
   },
   card: {
-    alignItems: 'center',
-    display: 'flex',
     width: 240,
     height: 120,
-    justifyContent: 'center'
-  },
-  card2: {
-    width: 240,
-    height: 120,
-  },
-  card3: {
-    alignItems: 'center',
-    display: 'flex',
-    justifyContent: 'center'
+    overflowX: 'hidden',
+    overflowY: 'scroll'
   },
   container: {
     flexWrap: 'nowrap'
+  },
+  flexCenter: {
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center'
   },
   noShadow: {
     boxShadow: 'none'
@@ -84,7 +80,7 @@ class App extends React.Component<InternalProps, State> {
         <div className={classes.board}>
           <Grid
             container={true}
-            className={`${classes.root} ${classes.container}`}
+            className={classnames(classes.root, classes.container)}
             spacing={16}
           >
             <Grid item={true}>
@@ -95,7 +91,11 @@ class App extends React.Component<InternalProps, State> {
               >
                 {indices.map(index => (
                   <Grid key={index.name} item={true}>
-                    <Card className={`${classes.card} ${classes.noShadow}`}>
+                    <Card className={classnames(
+                      classes.card,
+                      classes.noShadow,
+                      classes.flexCenter
+                    )}>
                       <CardContent>
                         <Typography variant='title' component='p'>
                           {index.name}
