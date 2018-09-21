@@ -19,7 +19,11 @@ const styles = (theme: Theme): Record<string, CSSProperties> => ({
   }
 })
 
-interface IInternalProps extends IContextOption {
+interface IProps {
+  title: string
+}
+
+interface IInternalProps extends IContextOption, IProps {
   classes: Record<string, string>
 }
 
@@ -46,14 +50,14 @@ class AppBar extends React.Component<IInternalProps, IState> {
   }
 
   public render () {
-    const { classes } = this.props
+    const { classes, title } = this.props
     const { isLoggedIn } = this.state
     return (
       <div className={classes.root}>
         <MuiAppBar position='static'>
           <Toolbar>
             <Typography variant='title' color='inherit' className={classes.grow}>
-              UX Board
+              {title}
             </Typography>
             {isLoggedIn ? (
               <Button color='inherit' onClick={this.handleLogoutClick}>Logout</Button>
@@ -75,4 +79,4 @@ class AppBar extends React.Component<IInternalProps, IState> {
   }
 }
 
-export default withFirebase<{}>(withStyles(styles)(AppBar))
+export default withFirebase<IProps>(withStyles(styles)(AppBar))

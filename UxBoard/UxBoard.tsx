@@ -8,7 +8,6 @@ import * as firebase from 'firebase'
 import * as React from 'react'
 import { IContextOption } from '../firebase/FirebaseContext'
 import withFirebase from '../firebase/withFirebase'
-import AddDimensionButton from './AddDimensionButton'
 import DimensionArea from './DimensionArea'
 import { IIndex } from './interfaces'
 
@@ -75,42 +74,39 @@ class App extends React.Component<IInternalProps, IState> {
     const { classes } = this.props
     const { indices } = this.state
     return (
-      <React.Fragment>
-        <div className={classes.board}>
-          <Grid
-            container={true}
-            className={classnames(classes.root, classes.container)}
-            spacing={16}
-          >
-            <Grid item={true}>
-              <Grid
-                container={true}
-                direction='column'
-                spacing={16}
-              >
-                {indices.map(index => (
-                  <Grid key={index.name} item={true}>
-                    <Card className={classnames(
-                      classes.card,
-                      classes.noShadow,
-                      classes.flexCenter
-                    )}>
-                      <CardContent>
-                        <Typography variant='title' component='p'>
-                          {index.name}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
+      <div className={classes.board}>
+        <Grid
+          container={true}
+          className={classnames(classes.root, classes.container)}
+          spacing={16}
+        >
+          <Grid item={true}>
+            <Grid
+              container={true}
+              direction='column'
+              spacing={16}
+            >
+              {indices.map(index => (
+                <Grid key={index.name} item={true}>
+                  <Card className={classnames(
+                    classes.card,
+                    classes.noShadow,
+                    classes.flexCenter
+                  )}>
+                    <CardContent>
+                      <Typography variant='title' component='p'>
+                        {index.name}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
             </Grid>
-            <DimensionArea definedClasses={classes} indices={indices} />
           </Grid>
-        </div>
-        <AddDimensionButton />
-      </React.Fragment>
-    );
+          <DimensionArea definedClasses={classes} indices={indices} />
+        </Grid>
+      </div>
+    )
   }
 }
 

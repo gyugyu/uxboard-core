@@ -90,15 +90,17 @@ registerServiceWorker();
 
 ```js
 import React, { Component, Fragment } from 'react';
-import AppBar from 'uxboard-core/AppBar';
+import AddDimensionButton from 'uxboard-core/AddDimensionButton';
+import AppBar from 'uxboard-core/AppBar'; // optional
 import UxBoard from 'uxboard-core/UxBoard';
 
 class App extends Component {
   render() {
     return (
       <Fragment>
-        <AppBar />
+        <AppBar title='UX Board' />
         <UxBoard />
+        <AddDimensionButton />
       </Fragment>
     );
   }
