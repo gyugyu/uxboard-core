@@ -25,6 +25,9 @@ const styles: Record<string, CSSProperties> = {
   container: {
     flexWrap: 'nowrap'
   },
+  cursorPointer: {
+    cursor: 'pointer'
+  },
   flexCenter: {
     alignItems: 'center',
     display: 'flex',

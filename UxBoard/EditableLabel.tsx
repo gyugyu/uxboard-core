@@ -15,12 +15,12 @@ const style: Record<'textField', CSSProperties> = {
 interface IProps {
   classes: Record<'textField', string>
   definedClasses: Record<string, string>
+  editing: boolean
   initialValue: string
   onLeaveEditMode: (value: string) => void
 }
 
 interface IState {
-  isEditing: boolean
   open: boolean
   value: string
 }
@@ -30,29 +30,26 @@ class EditableLabel extends React.Component<IProps, IState> {
     super(props)
     const { initialValue } = props
     this.state = {
-      isEditing: initialValue === '',
       open: false,
       value: initialValue
     }
   }
 
   public componentWillReceiveProps (newProps: IProps) {
-    const { initialValue } = newProps
-    const isEditing = initialValue === ''
+    const { editing, initialValue } = newProps
     this.setState({
-      isEditing,
-      open: isEditing ? this.state.open : false,
+      open: editing ? this.state.open : false,
       value: initialValue
     })
   }
 
   public render (): React.ReactNode {
-    const { classes, definedClasses } = this.props
-    const { isEditing, open, value } = this.state
+    const { classes, definedClasses, editing } = this.props
+    const { open, value } = this.state
     return (
       <CardContent className={definedClasses.card3}>
         <Auth>
-          {user => user && isEditing ? (
+          {user => user && editing ? (
             <Tooltip
               open={open}
               placement='bottom'
@@ -68,7 +65,7 @@ class EditableLabel extends React.Component<IProps, IState> {
               />
             </Tooltip>
           ) : (
-            <Typography variant='subheading' onDoubleClick={this.handleDoubleClick}>
+            <Typography variant='subheading'>
               {value}
             </Typography>
           )}
@@ -77,9 +74,14 @@ class EditableLabel extends React.Component<IProps, IState> {
     )
   }
 
-  private handleDoubleClick = () => this.setState({ isEditing: true })
-
-  private handleBlur = () => this.setState({ open: false })
+  private handleBlur = () => {
+    const { onLeaveEditMode } = this.props
+    const { value } = this.state
+    this.setState({ open: false })
+    if (value !== '') {
+      onLeaveEditMode(value)
+    }
+  }
 
   private handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({ value: evt.target.value })
@@ -87,11 +89,11 @@ class EditableLabel extends React.Component<IProps, IState> {
 
   private handleFocus = () => this.setState({ open: true })
 
-  private handleKeyUp = (evt: React.KeyboardEvent): void => {
+  private handleKeyUp = (evt: React.KeyboardEvent) => {
     const { onLeaveEditMode } = this.props
     const { value } = this.state
     if (evt.keyCode === 13 && evt.shiftKey && value !== '') {
-      this.setState({ isEditing: false, open: false })
+      this.setState({ open: false })
       onLeaveEditMode(value)
     }
   }

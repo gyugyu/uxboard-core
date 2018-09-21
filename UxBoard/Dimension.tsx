@@ -8,6 +8,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import withStyles, { CSSProperties } from '@material-ui/core/styles/withStyles'
+import Tooltip from '@material-ui/core/Tooltip'
 import DeleteIcon from '@material-ui/icons/Delete'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import classnames from 'classnames'
@@ -37,14 +38,18 @@ interface IInternalProps extends IContextOption, IProps {
 
 interface IState extends IDimension {
   anchorEl: EventTarget & HTMLElement | null
-  open: boolean
+  editing: boolean
+  openMenu: boolean
+  openTooltip: boolean
 }
 
 class Dimension extends React.Component<IInternalProps, IState> {
   public state = {
     anchorEl: null,
+    editing: true,
     name: '',
-    open: false,
+    openMenu: false,
+    openTooltip: false,
     tasks: undefined
   }
 
@@ -61,7 +66,7 @@ class Dimension extends React.Component<IInternalProps, IState> {
       if (snapshot != null) {
         const dimension = snapshot.val() as IDimension | undefined
         if (dimension != null) {
-          this.setState({ ...dimension })
+          this.setState({ ...dimension, editing: dimension.name === '' })
         }
       }
     })
@@ -69,49 +74,75 @@ class Dimension extends React.Component<IInternalProps, IState> {
 
   public render () {
     const { classes, definedClasses } = this.props
-    const { anchorEl, name, open } = this.state
+    const { anchorEl, editing, name, openMenu, openTooltip } = this.state
     return (
       <Grid item={true}>
-        <Card className={classnames(definedClasses.card, classes.card)}>
-          <EditableLabel
-            definedClasses={definedClasses}
-            initialValue={name}
-            onLeaveEditMode={this.handleLeaveEditMode}
-          />
-          <Auth>
-            {user => user && (
-              <CardActions>
-                <div>
-                  <IconButton onClick={this.handleMoreClick}>
-                    <MoreVertIcon />
-                  </IconButton>
-                  <Menu anchorEl={anchorEl} onClose={this.handleClose} open={open}>
-                    <MenuItem onClick={this.handleDeleteClick}>
-                      <ListItemIcon>
-                        <DeleteIcon />
-                      </ListItemIcon>
-                      <ListItemText inset={true} primary='Delete' />
-                    </MenuItem>
-                  </Menu>
-                </div>
-              </CardActions>
-            )}
-          </Auth>
-        </Card>
+        <Tooltip
+          placement='top'
+          open={openTooltip}
+          title='Double click to edit'
+        >
+          <Card
+            className={classnames({
+              [classes.card]: true,
+              [definedClasses.card]: true,
+              [definedClasses.cursorPointer]: !editing
+            })}
+            onClick={this.handleCardClick}
+            onDoubleClick={this.handleCardDoubleClick}>
+            <EditableLabel
+              definedClasses={definedClasses}
+              editing={editing}
+              initialValue={name}
+              onLeaveEditMode={this.handleLeaveEditMode}
+            />
+            <Auth>
+              {user => user && (
+                <CardActions>
+                  <div>
+                    <IconButton onClick={this.handleMoreClick}>
+                      <MoreVertIcon />
+                    </IconButton>
+                    <Menu anchorEl={anchorEl} onClose={this.handleClose} open={openMenu}>
+                      <MenuItem onClick={this.handleDeleteClick}>
+                        <ListItemIcon>
+                          <DeleteIcon />
+                        </ListItemIcon>
+                        <ListItemText inset={true} primary='Delete' />
+                      </MenuItem>
+                    </Menu>
+                  </div>
+                </CardActions>
+              )}
+            </Auth>
+          </Card>
+        </Tooltip>
       </Grid>
     )
   }
 
-  private handleLeaveEditMode = (name: string) => {
-    this.dbRef.update({ name })
-    this.setState({ name })
+  private handleCardClick = () => {
+    const { editing } = this.state
+    if (!editing) {
+      setTimeout(() => this.setState({ openTooltip: false }), 3000)
+      this.setState({ openTooltip: true })
+    }
+  }
+
+  private handleCardDoubleClick = () => this.setState({ editing: true, openTooltip: false })
+
+  private handleLeaveEditMode = async (name: string): Promise<void> => {
+    if (this.state.name !== name) {
+      await this.dbRef.update({ name })
+    }
+    this.setState({ editing: false, name })
   }
 
   private handleMoreClick = (evt: React.MouseEvent<HTMLElement>) => {
-    this.setState({ anchorEl: evt.currentTarget, open: true })
+    this.setState({ anchorEl: evt.currentTarget, openMenu: true })
   }
 
-  private handleClose = () => this.setState({ anchorEl: null, open: false })
+  private handleClose = () => this.setState({ anchorEl: null, openMenu: false })
 
   private handleDeleteClick = async (): Promise<void> => {
     const { databasePrefix, firebase: firebaseApp, id } = this.props

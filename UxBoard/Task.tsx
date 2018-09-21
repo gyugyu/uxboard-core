@@ -10,6 +10,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import withStyles, { CSSProperties } from '@material-ui/core/styles/withStyles'
+import Tooltip from '@material-ui/core/Tooltip'
 import DoneIcon from '@material-ui/icons/Done'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import classnames from 'classnames'
@@ -51,13 +52,17 @@ interface IInternalProps extends IContextOption, IProps {
 
 interface IState extends ITask {
   anchorEl: EventTarget & HTMLElement | null
-  open: boolean
+  editing: boolean
+  openMenu: boolean
+  openTooltip: boolean
 }
 
 class Task extends React.Component<IInternalProps, IState> {
   public state = {
     anchorEl: null,
-    open: false,
+    editing: true,
+    openMenu: false,
+    openTooltip: false,
     status: TaskStatus.Yet,
     title: ''
   }
@@ -74,57 +79,69 @@ class Task extends React.Component<IInternalProps, IState> {
 
   public render (): React.ReactNode {
     const { classes, definedClasses } = this.props
-    const { anchorEl, title, status, open } = this.state
+    const { anchorEl, editing, openMenu, openTooltip, status, title } = this.state
     return (
       <Grid item={true}>
-        <Card className={classnames({
-          [classes.yet]: status === TaskStatus.Yet,
-          [classes.doing]: status === TaskStatus.Doing,
-          [classes.done]: status === TaskStatus.Done,
-          [definedClasses.card]: true
-        })}>
-          <EditableLabel
-            definedClasses={definedClasses}
-            initialValue={title}
-            onLeaveEditMode={this.handleLeaveEditMode}
-          />
-          <Auth>
-            {auth => auth && (
-              <CardActions>
-                {this.taskRef && (
-                  <div>
-                    <IconButton onClick={this.handleMoreClick}>
-                      <MoreVertIcon />
-                    </IconButton>
-                    <Menu anchorEl={anchorEl} onClose={this.handleClose} open={open}>
-                      <MenuItem
-                        disabled={status === TaskStatus.Yet}
-                        onClick={this.createHandleClickMenuItem(TaskStatus.Yet)}
-                      >
-                        Mark as yet
-                      </MenuItem>
-                      <MenuItem
-                        disabled={status === TaskStatus.Doing}
-                        onClick={this.createHandleClickMenuItem(TaskStatus.Doing)}
-                      >
-                        Mark as doing
-                      </MenuItem>
-                      <MenuItem
-                        disabled={status === TaskStatus.Done}
-                        onClick={this.createHandleClickMenuItem(TaskStatus.Done)}
-                      >
-                        <ListItemIcon>
-                          <DoneIcon />
-                        </ListItemIcon>
-                        <ListItemText inset={true} primary='Mark as done' />
-                      </MenuItem>
-                    </Menu>
-                  </div>
-                )}
-              </CardActions>
-            )}
-          </Auth>
-        </Card>
+        <Tooltip
+          open={openTooltip}
+          placement='bottom'
+          title='Double click to edit'
+        >
+          <Card
+            className={classnames({
+              [classes.yet]: status === TaskStatus.Yet,
+              [classes.doing]: status === TaskStatus.Doing,
+              [classes.done]: status === TaskStatus.Done,
+              [definedClasses.card]: true,
+              [definedClasses.cursorPointer]: !editing
+            })}
+            onClick={this.handleCardClick}
+            onDoubleClick={this.handleCardDoubleClick}
+          >
+            <EditableLabel
+              definedClasses={definedClasses}
+              editing={editing}
+              initialValue={title}
+              onLeaveEditMode={this.handleLeaveEditMode}
+            />
+            <Auth>
+              {auth => auth && (
+                <CardActions>
+                  {this.taskRef && (
+                    <div>
+                      <IconButton onClick={this.handleMoreClick}>
+                        <MoreVertIcon />
+                      </IconButton>
+                      <Menu anchorEl={anchorEl} onClose={this.handleClose} open={openMenu}>
+                        <MenuItem
+                          disabled={status === TaskStatus.Yet}
+                          onClick={this.createHandleClickMenuItem(TaskStatus.Yet)}
+                        >
+                          Mark as yet
+                        </MenuItem>
+                        <MenuItem
+                          disabled={status === TaskStatus.Doing}
+                          onClick={this.createHandleClickMenuItem(TaskStatus.Doing)}
+                        >
+                          Mark as doing
+                        </MenuItem>
+                        <MenuItem
+                          disabled={status === TaskStatus.Done}
+                          onClick={this.createHandleClickMenuItem(TaskStatus.Done)}
+                        >
+                          <ListItemIcon>
+                            <DoneIcon />
+                          </ListItemIcon>
+                          <ListItemText inset={true} primary='Mark as done' />
+                        </MenuItem>
+                      </Menu>
+                    </div>
+                  )}
+                </CardActions>
+              )}
+            </Auth>
+          </Card>
+        </Tooltip>
       </Grid>
     )
   }
@@ -137,21 +154,35 @@ class Task extends React.Component<IInternalProps, IState> {
         if (snapshot != null) {
           const task = snapshot.val() as ITask | undefined
           if (task != null) {
-            this.setState({ ...task })
+            this.setState({ ...task, editing: task.title === '' })
           }
         }
       })
     }
   }
 
-  private handleMoreClick = (evt: React.MouseEvent<EventTarget & HTMLElement>) => {
-    this.setState({ anchorEl: evt.currentTarget, open: true })
+  private handleCardClick = () => {
+    const { editing } = this.state
+    if (!editing) {
+      setTimeout(() => this.setState({ openTooltip: false }), 3000)
+      this.setState({ openTooltip: true })
+    }
   }
 
-  private handleClose = () => this.setState({ anchorEl: null, open: false })
+  private handleCardDoubleClick = () => this.setState({ editing: true, openTooltip: false })
+
+  private handleMoreClick = (evt: React.MouseEvent<EventTarget & HTMLElement>) => {
+    this.setState({ anchorEl: evt.currentTarget, openMenu: true })
+  }
+
+  private handleClose = () => this.setState({ anchorEl: null, openMenu: false })
 
   private handleLeaveEditMode = async (title: string): Promise<void> => {
     const { databasePrefix, dimensionId, firebase: firebaseApp, indexId } = this.props
+    if (this.state.title === title) {
+      this.setState({ editing: false })
+      return
+    }
     const db = firebaseApp.database()
     if (this.taskRef == null) {
       this.taskRef = db.ref(`${databasePrefix}/tasks`).push()
@@ -166,7 +197,7 @@ class Task extends React.Component<IInternalProps, IState> {
       }
       await db.ref().update(updates)
     } else {
-      await this.taskRef.update({ title })
+      await this.taskRef.update({ editing: false, title })
     }
     this.setState({ title })
   }
@@ -175,7 +206,7 @@ class Task extends React.Component<IInternalProps, IState> {
     if (this.taskRef != null) {
       await this.taskRef.update({ status })
     }
-    this.setState({ open: false, status })
+    this.setState({ openMenu: false, status })
   }
 }
 
