@@ -1,6 +1,8 @@
 import Grid from '@material-ui/core/Grid'
 import * as firebase from 'firebase'
 import * as React from 'react'
+import { DragDropContext } from 'react-dnd'
+import Html5Backend from 'react-dnd-html5-backend'
 import { IContextOption } from '../firebase/FirebaseContext'
 import withFirebase from '../firebase/withFirebase'
 import DimensionCards from './DimensionCards'
@@ -77,4 +79,4 @@ class DimensionArea extends React.Component<InternalProps, IState> {
   }
 }
 
-export default withFirebase<IProps>(DimensionArea)
+export default DragDropContext(Html5Backend)(withFirebase<IProps>(DimensionArea))
