@@ -3,8 +3,7 @@ import * as firebase from 'firebase'
 import * as React from 'react'
 import { IContextOption } from '../firebase/FirebaseContext'
 import withFirebase from '../firebase/withFirebase'
-import Dimension from './Dimension'
-import DimensionTasks from './DimensionTasks'
+import DimensionCards from './DimensionCards'
 import { IDimension, IIndex } from './interfaces'
 
 interface IProps {
@@ -60,7 +59,8 @@ class DimensionArea extends React.Component<InternalProps, IState> {
             >
               {Object.keys(dimensions).map(key => {
                 return (
-                  <DimensionTasks
+                  <DimensionCards
+                    dbRef={this.dbRef}
                     definedClasses={definedClasses}
                     dimension={dimensions[key]}
                     id={key}
@@ -69,22 +69,6 @@ class DimensionArea extends React.Component<InternalProps, IState> {
                   />
                 )
               })}
-            </Grid>
-          </Grid>
-          <Grid item={true}>
-            <Grid
-              className={definedClasses.container}
-              container={true}
-              spacing={16}
-            >
-              {Object.keys(dimensions).map(key => (
-                <Dimension
-                  definedClasses={definedClasses}
-                  key={key}
-                  id={key}
-                  dbRef={this.dbRef}
-                />
-              ))}
             </Grid>
           </Grid>
         </Grid>

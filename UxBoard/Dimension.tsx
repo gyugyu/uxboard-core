@@ -11,6 +11,7 @@ import withStyles, { CSSProperties } from '@material-ui/core/styles/withStyles'
 import Tooltip from '@material-ui/core/Tooltip'
 import DeleteIcon from '@material-ui/icons/Delete'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
+import ReorderIcon from '@material-ui/icons/Reorder'
 import classnames from 'classnames'
 import * as firebase from 'firebase'
 import * as React from 'react'
@@ -100,6 +101,9 @@ class Dimension extends React.Component<IInternalProps, IState> {
               {user => user && (
                 <CardActions>
                   <div>
+                    <IconButton>
+                      <ReorderIcon />
+                    </IconButton>
                     <IconButton onClick={this.handleMoreClick}>
                       <MoreVertIcon />
                     </IconButton>

@@ -1,18 +1,21 @@
 import Grid from '@material-ui/core/Grid'
+import * as firebase from 'firebase'
 import * as React from 'react'
+import Dimension from './Dimension'
 import { IDimension, IIndex } from './interfaces'
 import Task from './Task'
 
 interface IProps {
+  dbRef: firebase.database.Reference
   definedClasses: Record<string, string>
   dimension: IDimension
   id: string
   indices: IIndex[]
 }
 
-export default class DimensionTasks extends React.Component<IProps> {
+export default class DimensionCards extends React.Component<IProps> {
   public render (): React.ReactNode {
-    const { definedClasses, dimension, indices, id } = this.props
+    const { dbRef, definedClasses, dimension, indices, id } = this.props
     const tasks = dimension.tasks || {}
     const taskIds = Object.keys(tasks).filter(k => tasks[k])
     return (
@@ -38,6 +41,11 @@ export default class DimensionTasks extends React.Component<IProps> {
               />
             )
           })}
+          <Dimension
+            definedClasses={definedClasses}
+            id={id}
+            dbRef={dbRef}
+          />
         </Grid>
       </Grid>
     )
