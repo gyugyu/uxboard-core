@@ -1,18 +1,27 @@
 import Grid from '@material-ui/core/Grid'
 import * as firebase from 'firebase'
 import * as React from 'react'
-import { DragSource, DropTarget } from 'react-dnd'
+import {
+  ConnectDragSource,
+  ConnectDropTarget,
+  DndComponent,
+  DragSource,
+  DropTarget
+} from 'react-dnd'
 import { findDOMNode } from 'react-dom'
 import Dimension from './Dimension'
 import { IDimension, IIndex } from './interfaces'
 import Task from './Task'
 
 interface IProps {
+  connectDragSource?: ConnectDragSource
+  connectDropTarget?: ConnectDropTarget
   dbRef: firebase.database.Reference
   definedClasses: Record<string, string>
   dimension: IDimension
   id: string
   indices: IIndex[]
+  isDragging?: boolean
 }
 
 class DimensionCards extends React.Component<IProps> {
@@ -56,7 +65,11 @@ class DimensionCards extends React.Component<IProps> {
 
 const DIMENSION_TYPE = 'DIMENSION_TYPE'
 
-const Ds = DragSource<IProps>(
+const isElement = (elem: Element | Text): elem is Element => {
+  return elem.nodeType != null
+}
+
+const DraggableDimensionCards = DragSource<IProps>(
   DIMENSION_TYPE,
   {
     beginDrag (props) {
@@ -67,15 +80,28 @@ const Ds = DragSource<IProps>(
     connectDragSource: connect.dragSource(),
     isDragging: monitor.isDragging()
   })
-)((props: any) => {
+)(props => {
   const { connectDragSource } = props
   return (
-    <DimensionCards
-      ref={(instance: React.ReactInstance) => connectDragSource(findDOMNode(instance))}
+    connectDragSource ? <DimensionCards
+      ref={(instance: DimensionCards | null) => {
+        if (instance == null) {
+          return
+        }
+        const domNode = findDOMNode(instance)
+        if (domNode != null && isElement(domNode)) {
+          return connectDragSource(domNode)
+        }
+        return
+      }}
       {...props}
-    />
+    /> : <React.Fragment />
   )
 })
+
+const isReactElement = <T extends {}>(elem: any): elem is React.ReactElement<T> => {
+  return elem.props != null
+}
 
 export default DropTarget<IProps>(
   DIMENSION_TYPE,
@@ -84,12 +110,21 @@ export default DropTarget<IProps>(
   connect => ({
     connectDropTarget: connect.dropTarget()
   })
-)((props: any) => {
+)(props => {
   const { connectDropTarget } = props
   return (
-    <Ds
-      ref={(instance: React.ReactInstance) => connectDropTarget(findDOMNode(instance))}
+    connectDropTarget ? <DraggableDimensionCards
+      ref={(instance: DndComponent<IProps> | null) => { 
+        if (instance == null) {
+          return
+        }
+        const domNode = findDOMNode(instance)
+        if (domNode != null && isReactElement(domNode)) {
+          return connectDropTarget(domNode)
+        }
+        return
+      }}
       {...props}
-    />
+    /> : <React.Fragment />
   )
 })
