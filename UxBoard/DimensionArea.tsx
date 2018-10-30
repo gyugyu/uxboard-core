@@ -17,28 +17,38 @@ type InternalProps = IContextOption & IProps
 
 interface IState {
   dimensions: Record<string, IDimension>
+  order?: string[]
 }
 
 class DimensionArea extends React.Component<InternalProps, IState> {
   public state = {
-    dimensions: {} as Record<string, IDimension>
+    dimensions: {} as Record<string, IDimension>,
+    order: undefined
   }
 
-  private dbRef: firebase.database.Reference
+  private dimensionsRef: firebase.database.Reference
+  private orderRef: firebase.database.Reference
 
   constructor (props: InternalProps) {
     super(props)
     const { databasePrefix, firebase: firebaseApp } = props
-    this.dbRef = firebaseApp.database().ref(`${databasePrefix}/dimensions`)
+    this.dimensionsRef = firebaseApp.database().ref(`${databasePrefix}/dimensions`)
+    this.orderRef = firebaseApp.database().ref(`${databasePrefix}/dimensionOrder`)
   }
 
   public componentWillMount () {
-    this.dbRef.on('value', snapshot => {
+    this.dimensionsRef.on('value', snapshot => {
       if (snapshot != null) {
         const dimensions = snapshot.val() as Record<string, IDimension> | undefined
         if (dimensions != null) {
-          this.setState({ dimensions })
+          this.setState({ dimensions, order: Object.keys(dimensions) })
         }
+      }
+    })
+    this.orderRef.on('value', snapshot => {
+      if (snapshot != null) {
+        const order = snapshot.val() as string[] | undefined
+        this.setState({ order })
       }
     })
   }
@@ -46,6 +56,7 @@ class DimensionArea extends React.Component<InternalProps, IState> {
   public render (): React.ReactNode {
     const { definedClasses, indices } = this.props
     const { dimensions } = this.state
+    const order = this.state.order || Object.keys(dimensions)
     return (
       <Grid item={true}>
         <Grid
@@ -59,15 +70,17 @@ class DimensionArea extends React.Component<InternalProps, IState> {
               container={true}
               spacing={16}
             >
-              {Object.keys(dimensions).map(key => {
+              {order.map((key, i) => {
                 return (
                   <DimensionCards
-                    dbRef={this.dbRef}
+                    dbRef={this.dimensionsRef}
                     definedClasses={definedClasses}
                     dimension={dimensions[key]}
                     id={key}
+                    index={i}
                     indices={indices}
                     key={key}
+                    onHover={this.handleHover}
                   />
                 )
               })}
@@ -76,6 +89,13 @@ class DimensionArea extends React.Component<InternalProps, IState> {
         </Grid>
       </Grid>
     )
+  }
+
+  private handleHover = (dragIndex: number, hoverIndex: number) => {
+    const order = (this.state.order || []).slice()
+    const removed = order.splice(dragIndex, 1)
+    order.splice(hoverIndex, 0, removed[0])
+    this.setState({ order })
   }
 }
 
