@@ -56,7 +56,7 @@ class DimensionArea extends React.Component<InternalProps, IState> {
   public render (): React.ReactNode {
     const { definedClasses, indices } = this.props
     const { dimensions } = this.state
-    const order = this.state.order || Object.keys(dimensions)
+    const { order } = this
     return (
       <Grid item={true}>
         <Grid
@@ -92,10 +92,15 @@ class DimensionArea extends React.Component<InternalProps, IState> {
   }
 
   private handleHover = (dragIndex: number, hoverIndex: number) => {
-    const order = (this.state.order || []).slice()
+    const order = this.order.slice()
     const removed = order.splice(dragIndex, 1)
     order.splice(hoverIndex, 0, removed[0])
     this.setState({ order })
+  }
+
+  private get order (): string[] {
+    const { dimensions, order } = this.state
+    return order || Object.keys(dimensions)
   }
 }
 
