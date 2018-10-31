@@ -91,8 +91,8 @@ class DimensionArea extends React.Component<InternalProps, IState> {
     )
   }
 
-  private handleDrop = () => {
-    this.orderRef.set(this.order)
+  private handleDrop = async (): Promise<void> => {
+    await this.orderRef.set(this.order)
   }
 
   private handleHover = (dragIndex: number, hoverIndex: number) => {
