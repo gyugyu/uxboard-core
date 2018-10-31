@@ -5,7 +5,7 @@ import { DragDropContext } from 'react-dnd'
 import Html5Backend from 'react-dnd-html5-backend'
 import { IContextOption } from '../firebase/FirebaseContext'
 import withFirebase from '../firebase/withFirebase'
-import DimensionCards from './DimensionCards'
+import DndDimensionCards from './DndDimensionCards'
 import { IDimension, IIndex } from './interfaces'
 
 interface IProps {
@@ -72,7 +72,7 @@ class DimensionArea extends React.Component<InternalProps, IState> {
             >
               {order.map((key, i) => {
                 return (
-                  <DimensionCards
+                  <DndDimensionCards
                     definedClasses={definedClasses}
                     dimension={dimensions[key]}
                     id={key}
