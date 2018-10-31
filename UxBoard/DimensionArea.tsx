@@ -80,6 +80,7 @@ class DimensionArea extends React.Component<InternalProps, IState> {
                     index={i}
                     indices={indices}
                     key={key}
+                    onDrop={this.handleDrop}
                     onHover={this.handleHover}
                   />
                 )
@@ -89,6 +90,10 @@ class DimensionArea extends React.Component<InternalProps, IState> {
         </Grid>
       </Grid>
     )
+  }
+
+  private handleDrop = () => {
+    this.orderRef.set(this.order)
   }
 
   private handleHover = (dragIndex: number, hoverIndex: number) => {

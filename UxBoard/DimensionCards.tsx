@@ -17,6 +17,7 @@ interface IProps {
   index: number
   indices: IIndex[]
   isDragging?: boolean
+  onDrop: () => void
   onHover: (dragIndex: number, hoverIndex: number) => void
 }
 
@@ -105,6 +106,9 @@ const DraggableDimensionCards = DragSource<IProps>(
 export default DropTarget<IProps>(
   DIMENSION_TYPE,
   {
+    drop (props) {
+      props.onDrop()
+    },
     hover (props, monitor) {
       const dragIndex = (monitor.getItem() as IMonitoredItem).index
       const hoverIndex = props.index
