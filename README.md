@@ -17,8 +17,8 @@ This repository is maintained as subtree of [tech/uxboard](https://git.pepabo.co
 $ yarn global add create-react-app
 $ create-react-app your-app-name
 $ cd your-app-name
-$ yarn add firebase @material-ui/core @material-ui/icons
-$ yarn add 'git+https://git.pepabo.com/tech/uxboard-core#v1.0.0-95e01f4'
+$ yarn add @material-ui/core @material-ui/icons firebase react-dnd react-dnd-html5-backend
+$ yarn add 'git+https://git.pepabo.com/tech/uxboard-core#v1.0.0-4c4e88b'
 $ cat << EOS
 {
   "databasePrefix": "uxboard",
@@ -38,8 +38,8 @@ $ node_modules/.bin/uxboardify ./src/uxboard.json
 $ npm install -g create-react-app
 $ create-react-app your-app-name
 $ cd your-app-name
-$ npm install -s firebase @material-ui/core @material-ui/icons
-$ npm install -s 'git+https://git.pepabo.com/tech/uxboard-core#v1.0.0-95e01f4'
+$ npm install -s @material-ui/core @material-ui/icons firebase react-dnd react-dnd-html5-backend
+$ npm install -s 'git+https://git.pepabo.com/tech/uxboard-core#v1.0.0-4c4e88b'
 $ cat << EOS
 {
   "databasePrefix": "uxboard",
@@ -127,4 +127,14 @@ $ node_modules/.bin/gh-pages -d build
 $ npm install -D gh-pages
 $ npm run build
 $ node_modules/.bin/gh-pages -d build
+```
+
+## Upgrade
+
+```bash
+$ yarn add 'git+https://git.pepabo.com/tech/uxboard-core#v1.0.0-4c4e88b'
+
+# or
+
+$ npm install -s 'git+https://git.pepabo.com/tech/uxboard-core#v1.0.0-4c4e88b'
 ```
