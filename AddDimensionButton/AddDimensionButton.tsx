@@ -26,7 +26,7 @@ interface IInternalProps extends IContextOption {
 
 interface IState {
   isLoggedIn: boolean
-  order: string[] | undefined
+  order?: string[]
 }
 
 class AddDimensionButton extends React.Component<IInternalProps, IState> {

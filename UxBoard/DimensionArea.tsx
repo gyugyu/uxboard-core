@@ -17,7 +17,7 @@ type InternalProps = IContextOption & IProps
 
 interface IState {
   dimensions: Record<string, IDimension>
-  order: string[] | undefined
+  order?: string[]
 }
 
 class DimensionArea extends React.Component<InternalProps, IState> {

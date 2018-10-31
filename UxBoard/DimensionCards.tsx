@@ -1,12 +1,20 @@
 import Grid from '@material-ui/core/Grid'
 import * as React from 'react'
-import { ConnectDragSource, ConnectDropTarget, DragSource, DropTarget } from 'react-dnd'
+import {
+  ConnectDragPreview,
+  ConnectDragSource,
+  ConnectDropTarget,
+  DragSource,
+  DropTarget
+} from 'react-dnd'
 import { findDOMNode } from 'react-dom'
 import Dimension from './Dimension'
 import { IDimension, IIndex } from './interfaces'
+import isElement from './isElement'
 import Task from './Task'
 
 interface IProps {
+  connectDragPreview?: ConnectDragPreview
   connectDragSource?: ConnectDragSource
   connectDropTarget?: ConnectDropTarget
   definedClasses: Record<string, string>
@@ -21,7 +29,7 @@ interface IProps {
 
 class DimensionCards extends React.Component<IProps> {
   public render (): React.ReactNode {
-    const { definedClasses, dimension, indices, id, isDragging } = this.props
+    const { connectDragSource, definedClasses, dimension, indices, id, isDragging } = this.props
     const tasks = dimension.tasks || {}
     const taskIds = Object.keys(tasks).filter(k => tasks[k])
     return (
@@ -48,6 +56,7 @@ class DimensionCards extends React.Component<IProps> {
             )
           })}
           <Dimension
+            connectDragSource={connectDragSource}
             definedClasses={definedClasses}
             id={id}
           />
@@ -63,10 +72,6 @@ interface IMonitoredItem {
 
 const DIMENSION_TYPE = 'DIMENSION_TYPE'
 
-const isElement = (elem: Element | Text): elem is Element => {
-  return elem.nodeType != null
-}
-
 const DraggableDimensionCards = DragSource<IProps>(
   DIMENSION_TYPE,
   {
@@ -77,20 +82,21 @@ const DraggableDimensionCards = DragSource<IProps>(
     }
   },
   (connect, monitor) => ({
+    connectDragPreview: connect.dragPreview(),
     connectDragSource: connect.dragSource(),
     isDragging: monitor.isDragging()
   })
 )(props => {
-  const { connectDragSource, connectDropTarget } = props
+  const { connectDragPreview, connectDragSource, connectDropTarget } = props
   return (
-    connectDragSource && connectDropTarget ? <DimensionCards
+    connectDragPreview && connectDragSource && connectDropTarget ? <DimensionCards
       ref={(instance: DimensionCards | null) => {
         if (instance == null) {
           return
         }
         const domNode = findDOMNode(instance)
         if (domNode != null && isElement(domNode)) {
-          connectDragSource(domNode)
+          connectDragPreview(domNode)
           connectDropTarget(domNode as any)
         }
         return domNode

@@ -11,15 +11,18 @@ import withStyles, { CSSProperties } from '@material-ui/core/styles/withStyles'
 import Tooltip from '@material-ui/core/Tooltip'
 import DeleteIcon from '@material-ui/icons/Delete'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
-import ReorderIcon from '@material-ui/icons/Reorder'
 import classnames from 'classnames'
 import * as firebase from 'firebase'
 import * as React from 'react'
+import { ConnectDragSource } from 'react-dnd'
+import { findDOMNode } from 'react-dom'
 import Auth from '../Auth'
 import { IContextOption } from '../firebase/FirebaseContext'
 import withFirebase from '../firebase/withFirebase'
 import EditableLabel from './EditableLabel'
 import { IDimension } from './interfaces'
+import isElement from './isElement'
+import ReorderButton from './ReorderButton'
 
 const style: Record<'card', CSSProperties> = {
   card: {
@@ -28,6 +31,7 @@ const style: Record<'card', CSSProperties> = {
 }
 
 interface IProps {
+  connectDragSource?: ConnectDragSource 
   definedClasses: Record<string, string>
   id: string
 }
@@ -41,7 +45,7 @@ interface IState extends IDimension {
   editing: boolean
   openMenu: boolean
   openTooltip: boolean
-  order: string[] | undefined
+  order?: string[]
 }
 
 class Dimension extends React.Component<IInternalProps, IState> {
@@ -83,8 +87,8 @@ class Dimension extends React.Component<IInternalProps, IState> {
     })
   }
 
-  public render () {
-    const { classes, definedClasses } = this.props
+  public render (): React.ReactNode {
+    const { classes, connectDragSource, definedClasses } = this.props
     const { anchorEl, editing, name, openMenu, openTooltip } = this.state
     return (
       <Grid item={true}>
@@ -111,9 +115,16 @@ class Dimension extends React.Component<IInternalProps, IState> {
               {user => user && (
                 <CardActions>
                   <div>
-                    <IconButton>
-                      <ReorderIcon />
-                    </IconButton>
+                    {connectDragSource && <ReorderButton ref={instance => {
+                      if (instance == null) {
+                        return
+                      }
+                      const domNode = findDOMNode(instance)
+                      if (domNode != null && isElement(domNode)) {
+                        connectDragSource(domNode)
+                      }
+                      return domNode
+                    }} />}
                     <IconButton onClick={this.handleMoreClick}>
                       <MoreVertIcon />
                     </IconButton>
