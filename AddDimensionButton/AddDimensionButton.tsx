@@ -26,26 +26,34 @@ interface IInternalProps extends IContextOption {
 
 interface IState {
   isLoggedIn: boolean
+  order: string[] | undefined
 }
 
 class AddDimensionButton extends React.Component<IInternalProps, IState> {
   public state = {
-    isLoggedIn: false
+    isLoggedIn: false,
+    order: undefined as string[] | undefined
   }
 
   private auth: firebase.auth.Auth
-  private dbRef: firebase.database.Reference
+  private orderRef: firebase.database.Reference
 
   constructor (props: IInternalProps) {
     super(props)
-    const { databasePrefix, firebase } = props
-    this.auth = firebase.auth()
-    this.dbRef = firebase.database().ref(`${databasePrefix}/dimensions`)
+    const { databasePrefix, firebase: firebaseApp } = props
+    this.auth = firebaseApp.auth()
+    this.orderRef = firebaseApp.database().ref(`${databasePrefix}/dimensionOrder`)
   }
 
   public componentWillMount () {
     this.auth.onAuthStateChanged(user => {
       this.setState({ isLoggedIn: user != null })
+    })
+    this.orderRef.on('value', snapshot => {
+      if (snapshot != null) {
+        const order = snapshot.val() as string[] | undefined
+        this.setState({ order })
+      }
     })
   }
 
@@ -83,7 +91,17 @@ class AddDimensionButton extends React.Component<IInternalProps, IState> {
   }
 
   private handleAddClick = async (): Promise<void> => {
-    await this.dbRef.push({ name: '' })
+    const { databasePrefix, firebase: firebaseApp } = this.props
+    const { order } = this.state
+    const db = firebaseApp.database()
+    const newDimensionId = db.ref(`${databasePrefix}/dimensions`).push().key
+    const updates: Record<string, { name: '' } | string[]> = {
+      [`${databasePrefix}/dimensions/${newDimensionId}`]: { name: '' }
+    }
+    if (order != null && newDimensionId != null) {
+      updates[`${databasePrefix}/dimensionOrder`] = order.concat(newDimensionId)
+    }
+    await db.ref().update(updates)
   }
 }
 

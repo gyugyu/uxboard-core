@@ -30,7 +30,6 @@ const style: Record<'card', CSSProperties> = {
 interface IProps {
   definedClasses: Record<string, string>
   id: string
-  dbRef: firebase.database.Reference
 }
 
 interface IInternalProps extends IContextOption, IProps {
@@ -42,6 +41,7 @@ interface IState extends IDimension {
   editing: boolean
   openMenu: boolean
   openTooltip: boolean
+  order: string[] | undefined
 }
 
 class Dimension extends React.Component<IInternalProps, IState> {
@@ -51,24 +51,34 @@ class Dimension extends React.Component<IInternalProps, IState> {
     name: '',
     openMenu: false,
     openTooltip: false,
+    order: undefined as string[] | undefined,
     tasks: undefined
   }
 
-  private dbRef: firebase.database.Reference
+  private dimensionRef: firebase.database.Reference
+  private orderRef: firebase.database.Reference
 
   constructor (props: IInternalProps) {
     super(props)
-    const { id, dbRef } = props
-    this.dbRef = dbRef.child(id)
+    const { id, databasePrefix, firebase: firebaseApp } = props
+    const db = firebaseApp.database()
+    this.dimensionRef = db.ref(`${databasePrefix}/dimensions/${id}`)
+    this.orderRef = db.ref(`${databasePrefix}/dimensionOrder`)
   }
 
   public componentWillMount () {
-    this.dbRef.on('value', snapshot => {
+    this.dimensionRef.on('value', snapshot => {
       if (snapshot != null) {
         const dimension = snapshot.val() as IDimension | undefined
         if (dimension != null) {
           this.setState({ ...dimension, editing: dimension.name === '' })
         }
+      }
+    })
+    this.orderRef.on('value', snapshot => {
+      if (snapshot != null) {
+        const order = snapshot.val() as string[] | undefined
+        this.setState({ order })
       }
     })
   }
@@ -137,7 +147,7 @@ class Dimension extends React.Component<IInternalProps, IState> {
 
   private handleLeaveEditMode = async (name: string): Promise<void> => {
     if (this.state.name !== name) {
-      await this.dbRef.update({ name })
+      await this.dimensionRef.update({ name })
     }
     this.setState({ editing: false, name })
   }
@@ -150,12 +160,15 @@ class Dimension extends React.Component<IInternalProps, IState> {
 
   private handleDeleteClick = async (): Promise<void> => {
     const { databasePrefix, firebase: firebaseApp, id } = this.props
-    const { tasks } = this.state
-    let update: Record<string, null> = {
+    const { order, tasks } = this.state
+    let update: Record<string, string[] | null> = {
       [`${databasePrefix}/dimensions/${id}`]: null
     }
+    if (order != null) {
+      update[`${databasePrefix}/dimensionOrder`] = order.filter(v => v !== id)
+    }
     if (tasks != null) {
-      update = Object.keys(tasks).reduce<Record<string, null>>((pre, cur) => {
+      update = Object.keys(tasks).reduce<Record<string, string[] | null>>((pre, cur) => {
         return {
           ...pre,
           [`${databasePrefix}/tasks/${cur}`]: null

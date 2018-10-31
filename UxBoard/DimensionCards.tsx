@@ -1,5 +1,4 @@
 import Grid from '@material-ui/core/Grid'
-import * as firebase from 'firebase'
 import * as React from 'react'
 import { ConnectDragSource, ConnectDropTarget, DragSource, DropTarget } from 'react-dnd'
 import { findDOMNode } from 'react-dom'
@@ -10,7 +9,6 @@ import Task from './Task'
 interface IProps {
   connectDragSource?: ConnectDragSource
   connectDropTarget?: ConnectDropTarget
-  dbRef: firebase.database.Reference
   definedClasses: Record<string, string>
   dimension: IDimension
   id: string
@@ -23,7 +21,7 @@ interface IProps {
 
 class DimensionCards extends React.Component<IProps> {
   public render (): React.ReactNode {
-    const { dbRef, definedClasses, dimension, indices, id, isDragging } = this.props
+    const { definedClasses, dimension, indices, id, isDragging } = this.props
     const tasks = dimension.tasks || {}
     const taskIds = Object.keys(tasks).filter(k => tasks[k])
     return (
@@ -52,7 +50,6 @@ class DimensionCards extends React.Component<IProps> {
           <Dimension
             definedClasses={definedClasses}
             id={id}
-            dbRef={dbRef}
           />
         </Grid>
       </Grid>

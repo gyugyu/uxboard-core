@@ -17,13 +17,13 @@ type InternalProps = IContextOption & IProps
 
 interface IState {
   dimensions: Record<string, IDimension>
-  order?: string[]
+  order: string[] | undefined
 }
 
 class DimensionArea extends React.Component<InternalProps, IState> {
   public state = {
     dimensions: {} as Record<string, IDimension>,
-    order: undefined
+    order: undefined as string[] | undefined
   }
 
   private dimensionsRef: firebase.database.Reference
@@ -73,7 +73,6 @@ class DimensionArea extends React.Component<InternalProps, IState> {
               {order.map((key, i) => {
                 return (
                   <DimensionCards
-                    dbRef={this.dimensionsRef}
                     definedClasses={definedClasses}
                     dimension={dimensions[key]}
                     id={key}
