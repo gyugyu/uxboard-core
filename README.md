@@ -124,13 +124,3 @@ $ npm install -D gh-pages
 $ npm run build
 $ node_modules/.bin/gh-pages -d build
 ```
-
-## Upgrade
-
-```bash
-$ yarn add 'git+https://git.pepabo.com/tech/uxboard-core#v1.0.0-4c4e88b'
-
-# or
-
-$ npm install -s 'git+https://git.pepabo.com/tech/uxboard-core#v1.0.0-4c4e88b'
-```
