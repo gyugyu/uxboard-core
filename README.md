@@ -1,10 +1,6 @@
 # uxboard-core
 📋 UX achivement visualization tool
 
-## IMPORTANT
-
-This repository is maintained as subtree of [tech/uxboard](https://git.pepabo.com/tech/uxboard). **DO NOT MODIFY THIS REPOSITORY DIRECTLY.**
-
 ## Requirements
 
 * Node (>= 8.0.0)
@@ -18,7 +14,7 @@ $ yarn global add create-react-app
 $ create-react-app your-app-name
 $ cd your-app-name
 $ yarn add @material-ui/core @material-ui/icons firebase react-dnd react-dnd-html5-backend
-$ yarn add 'git+https://git.pepabo.com/tech/uxboard-core#v1.0.0-4c4e88b'
+$ yarn add @gyugyu/uxboard-core
 $ cat << EOS
 {
   "databasePrefix": "uxboard",
@@ -39,7 +35,7 @@ $ npm install -g create-react-app
 $ create-react-app your-app-name
 $ cd your-app-name
 $ npm install -s @material-ui/core @material-ui/icons firebase react-dnd react-dnd-html5-backend
-$ npm install -s 'git+https://git.pepabo.com/tech/uxboard-core#v1.0.0-4c4e88b'
+$ npm install -s @gyugyu/uxboard-core
 $ cat << EOS
 {
   "databasePrefix": "uxboard",

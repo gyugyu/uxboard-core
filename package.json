@@ -1,6 +1,5 @@
 {
-  "name": "uxboard-core",
-  "private": true,
+  "name": "@gyugyu/uxboard-core",
   "version": "1.0.0",
   "description": "📋 UX achivement visualization tool",
   "files": [
@@ -16,10 +15,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@git.pepabo.com/tech/uxboard-core.git"
+    "url": "git@github.com:gyugyu/uxboard-core.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "gyugyu",
   "license": "MIT",
   "dependencies": {
     "classnames": "^2.2.6"
